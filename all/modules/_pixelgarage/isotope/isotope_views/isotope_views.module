@@ -1,0 +1,211 @@
+<?php
+/**
+ * @file
+ * Provides a Views plugin for displaying content in Isotope's magical layouts.
+ */
+
+/**
+ * Implements hook_views_api().
+ */
+function isotope_views_views_api() {
+  return array('api' => 3);
+}
+
+/**
+ * Preprocess function for theme hook views_view_isotope (implemented as views_view_isotope.tpl.php).
+ * This function prepares all necessary variables to create the markup for the Isotope layout.
+ */
+function template_preprocess_views_view_isotope(&$vars) {
+  // Run preprocess function for unformatted style
+  template_preprocess_views_view_unformatted($vars);
+
+  // get saved view options
+  $view = $vars['view'];
+  $options = $vars['options'];
+
+  // extract isotope filters an sort criteria from rows and turn it into classes and attributes, if any
+  $filter_classes = array();
+  $filters_enabled = 0;
+  $sort_attributes = array();
+  $sort_data = array();
+  $sort_enabled = 0;
+  $sort_criteria = _create_sparse_sort_criteria($vars['rows']);
+
+  foreach ($vars['rows'] as $id => $row) {
+    //
+    // create filter classes
+    if (strstr($row, '<div class="isotope-filters">')) {
+      $rowparts = explode('<div class="isotope-filters">', $row);
+      $len = strpos($rowparts[1], '</div>');
+      $filterpart = trim(substr($rowparts[1], 0, $len));
+
+      // get the comma separated filters and add it as cleaned css classes to the filter classes
+      $filters = explode(',', $filterpart);
+      $classes = '';
+      foreach ($filters as $filter) {
+        $classes .= drupal_clean_css_identifier(strtolower(trim($filter))) . ' ';
+      }
+      $filter_classes[$id] = trim($classes) . _create_random_width_height_class($options['isotope_item_sizing']);
+
+      // strip the isotope-filters element from the row
+      $row = $rowparts[0] . substr($rowparts[1], $len+6);
+
+      // enable filtering
+      $filters_enabled++;
+
+    } else {
+      // make sure filter_classes exists for each row
+      $filter_classes[$id] = _create_random_width_height_class($options['isotope_item_sizing']);
+
+    }
+
+    //
+    // create sort attributes
+    if (strstr($row, '<div class="isotope-sorting">')) {
+      //
+      // normal sorting by one or multiple sort criteria
+      //
+      $rowparts = explode('<div class="isotope-sorting">', $row);
+      $len = strpos($rowparts[1], '</div>');
+      $sortpart = trim(substr($rowparts[1], 0, $len));
+
+      // get the comma separated sort values and create the attribute list
+      $sort_values = explode(',', $sortpart);
+      $attributes = '';
+      $i = 0;
+      foreach ($sort_values as $val) {
+        $sort_crit = 'sort-criteria-' . $i;
+        $val = trim($val);
+        $val = ($val != '') ? $val : '{undef}';
+        // custom attributes has to start with 'data-' in valid HTML
+        $attributes .= 'data-' . $sort_crit . '="' . trim($val) . '" ';
+        $i++;
+
+        // create sort data definition array (only once for all rows)
+        if ($id == 0) {
+          $sort_data[$sort_crit] = '[data-' . $sort_crit . ']';
+        }
+      }
+      $sort_attributes[$id] = trim($attributes);
+
+      // strip the isotope-sorting element from the row
+      $vars['rows'][$id] = $rowparts[0] . substr($rowparts[1], $len+6);
+
+      // enable sorting
+      $sort_enabled++;
+
+    } else if (count($sort_criteria) > 0) {
+      //
+      // sparse sorting with one item field value.
+      // Sparse sorting creates for each distinct field value a new sort criteria [attribute].
+      //
+      $sort_value = '';
+      $rowparts = explode('<div class="isotope-sparse-sorting">', $row);
+      if (count($rowparts) > 1) {
+        $len = strpos($rowparts[1], '</div>');
+        $sortpart = trim(substr($rowparts[1], 0, $len));
+        // get the value (only first value considered)
+        $sort_value = strtolower(trim(explode(',', $sortpart)[0]));
+      }
+
+      // create the attribute list
+      $sparse_attr = '';
+      foreach ($sort_criteria as $val => $sort_crit) {
+        $val = ($sort_value === $val) ? $val : '{undef}';
+        $sparse_attr .= 'data-' . $sort_crit . '="' . $val . '"';
+
+        if ($id == 0) {
+          // custom attributes has to start with 'data-' in valid HTML
+          $sort_data[$sort_crit] = '[data-' . $sort_crit . ']';
+        }
+      }
+      $sort_attributes[$id] = $sparse_attr;
+
+      // strip the isotope-sorting element from the row
+      if (count($rowparts) > 1) {
+        $vars['rows'][$id] = $rowparts[0] . substr($rowparts[1], $len+6);
+      }
+
+      // enable sorting
+      $sort_enabled++;
+
+    } else {
+      // make sure sort attributes exists for each row and changed filter row is set to $vars
+      $sort_attributes[$id] = '';
+      $vars['rows'][$id] = $row;
+
+    }
+
+  }
+  $vars['filter_classes'] = $filter_classes;
+  $vars['sort_attributes'] = $sort_attributes;
+
+  // add additional isotope options for use in javascript
+  $container = '.view-' . drupal_clean_css_identifier($view->name) . '.view-display-id-' . $view->current_display . ' .view-content';
+  $options['isotope_item_selector'] = '.isotope-item';
+  $options['isotope_grid_sizer'] = '.grid-sizer';
+  $options['isotope_gutter_sizer'] = '.gutter-sizer';
+  $options['isotope_stamp_elements'] = '.stamp';
+  $options['isotope_filters_enabled'] = $filters_enabled > 0;
+  $options['isotope_sort_enabled'] = $sort_enabled > 0;
+  $options['isotope_sort_data'] = $sort_data;
+
+  // apply isotope to container with all options
+  isotope_layout_apply($container, $options);
+}
+
+
+/**
+ * Helper function to create sparse sort criterias.
+ * @param $rows Rows array
+ */
+function _create_sparse_sort_criteria($rows) {
+  $sort_criteria = array();
+
+  foreach ($rows as $id => $row) {
+    $sort_value = '';
+    if (strstr($row, '<div class="isotope-sparse-sorting">')) {
+      $rowparts = explode('<div class="isotope-sparse-sorting">', $row);
+      $len = strpos($rowparts[1], '</div>');
+      $sortpart = trim(substr($rowparts[1], 0, $len));
+      // get the value (only first value considered)
+      $sort_value = strtolower(trim(explode(',', $sortpart)[0]));
+
+    }
+
+    // create the attribute list
+    if (strlen($sort_value) > 0 && !array_key_exists($sort_value, $sort_criteria)) {
+      // add new attribute with new value
+      $sort_criteria[$sort_value] = 'sort-criteria-' . drupal_clean_css_identifier($sort_value);
+    }
+
+  }
+  return $sort_criteria;
+}
+
+/**
+ * Create item width and height class randomly, e.g. w2 h1.
+ */
+function _create_random_width_height_class ($item_sizing_key) {
+  if ($item_sizing_key === 'manual') {
+    // no sizing classes added
+    return '';
+  }
+
+  // create the sizing classes randomly
+  switch ($item_sizing_key) {
+    case 'w1xh2':
+      return ' w1 h' . rand(1, 2);
+    case 'w2xh1':
+      return ' w' . rand(1, 2) . ' h1';
+    case 'w2xh2':
+      return ' w' . rand(1, 2) . ' h' . rand(1, 2);
+    case 'w2xh3':
+      return ' w' . rand(1, 2) . ' h' . rand(1, 3);
+    case 'w3xh2':
+      return ' w' . rand(1, 3) . ' h' . rand(1, 2);
+    case 'w3xh3':
+      return ' w' . rand(1, 3) . ' h' . rand(1, 3);
+  }
+
+}

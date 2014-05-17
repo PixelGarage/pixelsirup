@@ -1,0 +1,7 @@
+name = Responsive widgets
+description = Provides several types of fully responsive widgets as blocks, ready to be added to your site.
+core = 7.x
+files[] = responsive_widgets.module
+files[] = responsive_widgets.classes.inc
+configure = admin/structure/responsive_widgets
+dependencies[] = "ctools"

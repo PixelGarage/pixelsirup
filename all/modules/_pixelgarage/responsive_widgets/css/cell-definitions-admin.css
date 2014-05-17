@@ -1,0 +1,21 @@
+
+/* Cell definition admin form */
+
+#proximity-cell-definition-table .cell-definition-name {
+  width: 130px;
+}
+
+#proximity-cell-definition-table .cell-definition-xpos,
+#proximity-cell-definition-table .cell-definition-ypos,
+#proximity-cell-definition-table .cell-definition-remove {
+    width: 60px;
+}
+
+#proximity-cell-definition-table .cell-definition-title {
+    width: 100px;
+}
+
+#proximity-cell-definition-table .cell-definition-link,
+#proximity-cell-definition-table .cell-definition-description {
+    width: 200px;
+}

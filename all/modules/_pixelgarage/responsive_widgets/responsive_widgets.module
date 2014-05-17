@@ -1,0 +1,303 @@
+<?php
+/**
+* @file
+* Creates responsive, highly configurable widgets.
+*/
+
+/**
+ * Implements hook_help().
+ */
+function responsive_widgets_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#responsive_widgets':
+      $output = '<p>' . t('') . '</p>';
+      return $output;
+  }
+  if ($path == 'admin/structure/responsive_widgets' && module_exists('block')) {
+    $output = '<p>' . t('Responsive Widgets is a collection of highly configurable, fully responsive widgets. They adapt nicely to any screen size and can be controlled via mouse on a screen or via touches on a mobile device.') . '</p>';
+    $output .= '<ul>' . t('The following responsive widgets are available:');
+    $output .= '<li>' . t('Proximity widget. Unveil cellular information based on the mouse (finger) position. Only one proximity widget per page supported.') . '</li>';
+    $output .= '</ul>';
+    $output .= '<p>' . t('Each Responsive Widget in the list below has a corresponding block that can be added to any defined region in your theme and is managed on the <a href="@blocks">blocks administration page</a>.', array('@blocks' => url('admin/structure/block'))) . '</p>';
+    return $output;
+  }
+}
+
+/**
+ * Implements hook_menu.
+ */
+function responsive_widgets_menu() {
+  $items['admin/structure/responsive_widgets'] = array(
+    'title' => 'Responsive Widgets',
+    'description' => 'Create blocks of different kinds of responsive widgets.',
+    'page callback' => 'responsive_widgets_list',
+    'access callback' => 'user_access',
+    'access arguments' => array('administer responsive widgets'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'responsive_widgets.admin.inc'
+  );
+  $items['admin/structure/responsive_widgets/list'] = array(
+    'title' => 'List all responsive widgets',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+  $items['admin/structure/responsive_widgets/add'] = array(
+    'title' => 'Add widget',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('responsive_widgets_admin_form', 'add'),
+    'access arguments' => array('administer responsive widgets'),
+    'type' => MENU_LOCAL_ACTION,
+    'file' => 'responsive_widgets.admin.inc'
+  );
+  $items['admin/structure/responsive_widgets/manage/%responsive_widgets'] = array(
+    'title' => 'Edit widget',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('responsive_widgets_admin_form', 'edit', 4),
+    'access arguments' => array('administer responsive widgets'),
+    'file' => 'responsive_widgets.admin.inc'
+  );
+  $items['admin/structure/responsive_widgets/manage/%responsive_widgets/edit'] = array(
+    'title' => 'Edit widget',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'context' => MENU_CONTEXT_INLINE,   /* show as link instead of tab */
+  );
+  $items['admin/structure/responsive_widgets/manage/%responsive_widgets/clone'] = array(
+    'title' => 'Clone widget',
+    'page callback' => 'responsive_widgets_clone',
+    'page arguments' => array(4),
+    'access arguments' => array('administer responsive widgets'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'responsive_widgets.admin.inc'
+  );
+  $items['admin/structure/responsive_widgets/manage/%responsive_widgets/delete'] = array(
+    'title' => 'Delete widget',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('responsive_widgets_delete_form', 4),
+    'access arguments' => array('administer responsive widgets'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'responsive_widgets.admin.inc'
+  );
+  $items['admin/structure/responsive_widgets/manage/%responsive_widgets/export'] = array(
+    'title' => 'Export widget',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('responsive_widgets_export_form', 4),
+    'access arguments' => array('administer responsive widgets'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'responsive_widgets.admin.inc'
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function responsive_widgets_permission() {
+  return array(
+    'administer responsive widgets' => array(
+      'title' => t('Administer Responsive Widgets'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_theme().
+ */
+function responsive_widgets_theme() {
+  $themes = array();
+
+  // get all widgets theme functions to register
+  foreach (responsive_widgets_load_multiple() as $rw_id => $rw) {
+    if ($widget = ResponsiveWidget::widgetFactory($rw->type, $rw)) {
+      $themes = array_merge($themes, $widget->getSettingsFormThemes());
+    }
+  }
+  return $themes;
+}
+
+
+/**
+ * Implements hook_block_info.
+ */
+function responsive_widgets_block_info() {
+  $blocks = array();
+  foreach (responsive_widgets_load_multiple() as $rw_id => $widget) {
+    $blocks[$rw_id]['info'] = $widget->title;
+    $blocks[$rw_id]['cache'] = DRUPAL_NO_CACHE;
+  }
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view.
+ *
+ * @param string $delta, the responsive widget id to be displayed.
+ * @return array $block, A renderable array containing the widget block.
+ */
+function responsive_widgets_block_view($delta = '') {
+  $block = array();
+  if ($rw = responsive_widgets_build_widget($delta)) {
+    if (isset($rw['content']) && !empty($rw['content'])) {
+      $block['content'] = $rw['content'];
+      $block['subject'] = check_plain($rw['#title']);
+      // add a contextual link for the block
+      $block['content']['#contextual_links']['responsive_widgets'] = array('admin/structure/responsive_widgets/manage', array($delta));
+
+      // make widget settings available to JavaScript
+      if (isset($rw['js_settings']) && !empty($rw['js_settings'])) {
+        drupal_add_js($rw['js_settings'], 'setting');
+      }
+    }
+  }
+
+  return $block;
+}
+
+
+/**
+ * Builds a responsive widget.
+ *
+ * @param rw_id. The machine name of the responsive widget to build.
+ * @return array. A renderable array defining the responsive widget markup.
+ */
+function responsive_widgets_build_widget($rw_id) {
+  // load the widget from database
+  if ($rw = responsive_widgets_load($rw_id)) {
+    // Allow other modules to alter the responsive widget before it gets output.
+    drupal_alter('responsive_widgets', $rw);
+  } else {
+    // If $rw_id doesn't correspond to an existing responsive widget, return empty array
+    return array();
+  }
+
+  // create responsive widget and fill renderable array
+  if ($widget = ResponsiveWidget::widgetFactory($rw->type, $rw)) {
+    $renderable_rw = array(
+      '#title' => $widget->getTitle(),
+      'content' => $widget->render(),
+      'js_settings' => $widget->getJSSettings()
+    );
+    return $renderable_rw;
+  }
+  return array();
+}
+
+/*
+ * Database methods
+ */
+
+/**
+ * Loads a responsive widget from database (ctools export based).
+ * Remark: Called by menu auto loader wildcards.
+ */
+function responsive_widgets_load($rw_id) {
+  $rws = responsive_widgets_load_multiple(array($rw_id));
+  return isset($rws[$rw_id]) ? $rws[$rw_id] : NULL;
+
+}
+
+/**
+ * Load multiple responsive widgets from database (ctools export based).
+ * The data structure of a widget is as follows:
+ * @code
+ *   $rw = new stdClass();
+ *   $rw->machine_name = 'test_proximity';
+ *   $rw->title = 'TestProximity';
+ *   $rw->hw_ratio = 0.618;
+ *   $rw->type = 'proximity';
+ *   $rw->settings = array(
+ *
+ *     ... widget specific settings
+ *   );
+ *   $rw->export_type = EXPORT_IN_CODE;
+ * @endcode
+ */
+function responsive_widgets_load_multiple($rw_ids = array()) {
+  ctools_include('export');
+  $rws = empty($rw_ids) ? ctools_export_load_object('responsive_widgets', 'all') : ctools_export_load_object('responsive_widgets', 'names', $rw_ids);
+  return $rws;
+}
+
+/**
+ * Saves or updates a responsive widget to the database.
+ */
+function responsive_widgets_save($rw, $update = false) {
+  if ($update) {
+    // update the existing responsive widget in database
+    $ret = drupal_write_record('responsive_widgets', $rw, 'machine_name');
+    if ($ret != SAVED_UPDATED) return FALSE;
+  } else {
+    // create new responsive widget in database
+    $ret = drupal_write_record('responsive_widgets', $rw);
+    if ($ret != SAVED_NEW) return FALSE;
+  }
+  return $rw;
+}
+
+/**
+ * Updates an existing responsive widget.
+ */
+function responsive_widgets_update($rw) {
+  $rw = responsive_widgets_save($rw, true);
+  return $rw;
+}
+
+/**
+ * Deletes a responsive widget.
+ */
+function responsive_widgets_delete($rw_id) {
+  db_query('DELETE FROM {responsive_widgets} WHERE machine_name = :machine_name', array(':machine_name' => $rw_id));
+}
+
+/**
+ * Determine if the machine name is in use.
+ */
+function responsive_widgets_machine_name_exists($rw_id) {
+  $id_exists = db_query_range('SELECT 1 FROM {responsive_widgets} WHERE machine_name = :name', 0, 1, array(':name' => $rw_id))->fetchField();
+  return $id_exists;
+}
+
+
+/*
+ * CTools Export definition
+ */
+
+/**
+ * Exports the specified responsive widget with translatable strings.
+ */
+function responsive_widgets_export($rw, $indent = '') {
+  $output = ctools_export_object('quicktabs', $rw, $indent);
+  return $output;
+}
+
+/*
+ * CTools Plugins definition
+ */
+
+/**
+ * Registers the "widget" plugin type used in this module.
+ */
+function responsive_widgets_ctools_plugin_type(){
+  $plugins['widget'] = array(
+    'cache' => TRUE,
+    'use hooks' => TRUE,
+    'classes' => array('handler'),
+  );
+
+  return $plugins;
+}
+
+/**
+ * Implements hook_Module_PluginType() defining all widgets available as plugins.
+ */
+function responsive_widgets_responsive_widgets_widget() {
+  $info = array();
+  $path = drupal_get_path('module', 'responsive_widgets') . '/widgets';
+  $widgets['proximity'] = array(
+    'path' => $path,
+    'handler' => array(
+      'file' => 'RWProximityWidget.inc',
+      'class' => 'RWProximityWidget',
+    ),
+  );
+
+  return $widgets;
+}

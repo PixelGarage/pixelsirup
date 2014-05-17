@@ -1,0 +1,65 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: ralph
+ * Date: 03.12.13
+ * Time: 14:44
+ */
+
+/**
+ * Implements hook_schema() for the responsive widgets.
+ */
+function responsive_widgets_schema() {
+  $schema['responsive_widgets'] = array(
+    'description' => 'The table storing responsive widgets.',
+    'export' => array(
+      'key' => 'machine_name',
+      'identifier' => 'widget',
+      'default hook' => 'default_responsive_widgets_widget',
+      'export type string' => 'storage_type',
+      'api' => array(
+        'owner' => 'responsive_widgets',
+        'api' => 'responsive_widgets',
+        'minimum_version' => 1,
+        'current_version' => 1,
+      ),
+      'export callback' => 'responsive_widgets_export',
+    ),
+    'fields' => array(
+      'machine_name' => array(
+        'description' => 'The primary identifier for a responsive widget block.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'title' => array(
+        'description' => 'The title of this responsive widget block.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'type' => array(
+        'description' => 'The type of the responsive widget.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'hw_ratio' => array(
+        'description' => 'The height/width ratio of the responsive widget.',
+        'type' => 'float',
+        'size' => 'normal',
+        'not null' => TRUE,
+      ),
+      'settings' => array(
+        'description' => 'A serialized array of the settings for this responsive widget type.',
+        'type' => 'text',
+        'size' => 'medium',
+        'not null' => FALSE,
+        'serialize' => TRUE,
+      ),
+    ),
+    'primary key' => array('machine_name'),
+  );
+  return $schema;
+}
+

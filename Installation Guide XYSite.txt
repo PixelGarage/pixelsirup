@@ -1,0 +1,28 @@
+Installation of Basic Drupal Site:
+
+File structure:
+1) Extract the newest Drupal version to a directory.
+2) Copy sites-Folder to the Drupal directory.
+3) Rename Sub-Theme folder and files to site name
+
+Database:
+1) Create DB in MySQL with a specific name (pixelgar_dp…Stage)
+2) Import DB-Backup in sites/default/files_private/backup_migrate/manual/db_xy_stage….mysql.gz into new DB via phpMyAdmin.
+3) Add db-name in settings.php
+
+
+Settings:
+The basic modules and settings are configured. Change following settings to the specific site names:
+
+1) Site settings: name, email etc
+2) Backup and migrate: db name
+3) Theme: site name, logo, etc…
+4) Update all modules to the newest version
+
+Start implementing the new site….
+
+
+Administrator:  dpAdmin
+Passwort:	usual
+
+Version: 1.1 (29.3.2014)
