@@ -2,27 +2,31 @@ Installation of Basic Drupal Site:
 
 File structure:
 1) Extract the newest Drupal version to a directory.
-2) Copy sites-Folder to the Drupal directory.
-3) Rename Sub-Theme folder and files to site name
+2) Copy sites-folder to the Drupal directory (or git clone /Volumes/Groups/osx_development/0_GitHub/xySite_sites.git)
+3) Delete .git folder in sites-folder
 
 Database:
 1) Create DB in MySQL with a specific name (pixelgar_dp…Stage)
 2) Import DB-Backup in sites/default/files_private/backup_migrate/manual/db_xy_stage….mysql.gz into new DB via phpMyAdmin.
-3) Add db-name in settings.php
+3) Replace db-name in settings.php
 
+Modules:
+The basic modules are enabled and configured.
+1) Enable additional modules used for the project.
+2) Update all modules to the newest version (drush up --no-core)
+3) Update Drupal core, if necessary
 
 Settings:
-The basic modules and settings are configured. Change following settings to the specific site names:
+The basic settings are configured. Change following settings to the specific values:
 
 1) Site settings: name, email etc
 2) Backup and migrate: db name
 3) Theme: site name, logo, etc…
-4) Update all modules to the newest version
 
 Start implementing the new site….
 
 
-Administrator:  dpAdmin
+User:       dpAdmin
 Passwort:	usual
 
-Version: 1.1 (29.3.2014)
+Version: 1.2 (17.5.2014)
