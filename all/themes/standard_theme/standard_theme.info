@@ -15,7 +15,6 @@
   ; See each stylesheet for extensive documentation and help.
   stylesheets[screen][] = css/global.base.css
   stylesheets[screen][] = css/global.styles.css
-  stylesheets[all][]    = fonts/font-awesome/css/font-awesome.min.css
 
   ; Print - uncomment to load basic print styles.
   ; stylesheets[print][] = css/print.css
@@ -174,7 +173,7 @@
   settings[tablet_landscape_page_width]     = 100
   settings[tablet_landscape_sidebar_first]  = 20
   settings[tablet_landscape_sidebar_second] = 20
-  settings[tablet_landscape_media_query]    = 'only screen and (min-width:48.0625em)'
+  settings[tablet_landscape_media_query]    = 'only screen and (min-width:48.0625em) and (max-width:64em)'
 
 
   ; Layout settings - Tablet portrait (overlapping - mobile first)
@@ -184,7 +183,7 @@
   settings[tablet_portrait_page_width]     = 100
   settings[tablet_portrait_sidebar_first]  = 50
   settings[tablet_portrait_sidebar_second] = 50
-  settings[tablet_portrait_media_query]    = 'only screen and (min-width:30.0625em)'
+  settings[tablet_portrait_media_query]    = 'only screen and (min-width:30.0625em) and (max-width:48em)'
 
 
   ; Layout settings - Smalltouch landscape (overlapping - mobile first)
@@ -194,7 +193,7 @@
   settings[smalltouch_landscape_page_width]     = 100
   settings[smalltouch_landscape_sidebar_first]  = 50
   settings[smalltouch_landscape_sidebar_second] = 50
-  settings[smalltouch_landscape_media_query]    = 'only screen and (min-width:20.0625em)'
+  settings[smalltouch_landscape_media_query]    = 'only screen and (min-width:20.0625em) and (max-width:30em)'
 
 
   ; Layout settings - Smalltouch portrait (overlapping - mobile first)
@@ -204,7 +203,7 @@
   settings[smalltouch_portrait_page_width]     = 100
   settings[smalltouch_portrait_sidebar_first]  = 100
   settings[smalltouch_portrait_sidebar_second] = 100
-  settings[smalltouch_portrait_media_query]    = 'only screen and (min-width:10.0625em)'
+  settings[smalltouch_portrait_media_query]    = 'only screen and (max-width:20em)'
 
 
   ; Responsive Panels - Standard layout
