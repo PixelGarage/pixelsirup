@@ -76,18 +76,12 @@
 /* =============================================================================
  *   General reset
  * ========================================================================== */
-#main-content,
-.block-inner,
-.pane-inner,
-.menu-wrapper,
-.branding-elements,
-.breadcrumb-wrapper,
-.attribution,
-.at-panel .rounded-corner,
-.block-panels-mini > .block-title,
-div.messages {
-    margin-left: 0;
-    margin-right: 0;
+/*
+ * AT regions (top and nested regions)
+ */
+.at-panel > .region > .region-inner,
+.at-panel .at-panel > .region > .region-inner {
+    margin: 0.5em 0;
 }
 
 /*
@@ -98,14 +92,6 @@ div.messages {
 .block .block-title {
     margin: 0;
 }
-/*
- * AT regions (normal and nested regions)
- */
-.at-panel > .region > .region-inner,
-.at-panel .at-panel > .region > .region-inner {
-    margin: 0;
-}
-
 /*
  * Fields
  */
@@ -181,9 +167,11 @@ var {
     margin: 0.625em;
 }
 .region-help > .region-inner,
-.region-secondary-content > .region-inner,
+.region-secondary-content > .region-inner {
+    margin: 0 0.625em 0.5em;
+}
 .region-tertiary-content > .region-inner {
-    margin: 0 0.625em;
+    margin: 0 0.625em 2em;
 }
 
 /*
@@ -191,48 +179,38 @@ var {
  */
 #header > .branding-elements,
 #header > .region-header > .region-inner {
-    margin: 0 0.625em;
+    margin: 0 0.625em 0.5em;
 }
 /*
  * Menu bar wrapper
  */
 #menu-bar > nav.menu-bar-wrapper {
     position: static;
-    margin: 0 0.625em;
+    margin: 0 0.625em 0.5em;
 }
 /*
  * Breadcrumb wrapper
  */
 #breadcrumb > nav.breadcrumb-wrapper {
-    margin: 0 0.625em;
+    margin: 0 0.625em 0.5em;
 }
 /*
  *  message panel
  */
 #messages > div.messages {
-    margin: 0.625em;
+    margin: 0 0.625em 0.5em;
 }
 /*
  * Main content wrapper
  */
 #columns > .content-column > .content-inner {
-    margin: 0 0.625em;
+    margin: 0 0.625em 0.5em;
 }
 /*
  * Footer wrapper
  */
 #footer > .region-footer > .region-inner {
-    margin: 0 0.625em 2em;
-}
-
-/* Blocks in footer */
-#footer .block-region-footer {
-    display: inline-block;
-    float: left;
-    width: 50%;
-}
-#footer .block-region-footer > .block-inner {
-    margin: 1em;
+    margin: 0 0.625em 0.5em;
 }
 
 
@@ -250,11 +228,10 @@ var {
  * Logo
  */
 #logo {
-    display: inline-block;
-    float: right;
+    display: block;
     padding: 0;
     margin: 0.625em 0;
-    width: 10em;
+    width: 18.75em;
 }
 
 #logo img {
@@ -265,13 +242,15 @@ var {
  * Wrapper for the site name and slogan (hgroup)
  */
 #name-and-slogan {
-    display: inline-block;
+    display: block;
+    margin: 0.625em 0;
+    width: 21.06em;
+    font-size: 0.89em;
+    font-weight: 400;
+    line-height: 1.5;
     color: #222;
-    font-size: 1.5em;
-    font-weight: bold;
-    line-height: 1.2;
     white-space: nowrap;
-    margin: 46px 0 0 0;
+    word-spacing: 0.1em;
 }
 
 /*
@@ -311,62 +290,85 @@ var {
 /*
  *   meta menu, login menu, legal menu
  */
-#block-menu-menu-meta-menu,
-#block-system-user-menu {
+#block-menu-menu-meta-menu {
     display:inline-block;
     float: right;
     font-size: 1.0em;
 }
-#block-menu-menu-legal-menu {
+#block-menu-menu-legal-menu,
+#block-menu-menu-copyright-menu,
+#block-system-user-menu {
     display:inline-block;
+    float: right;
     font-size: 0.8em;
-    width: 100%;
+}
+#block-menu-menu-copyright-menu {
+    float: left;
 }
 #block-menu-menu-meta-menu .block-inner,
 #block-system-user-menu .block-inner,
-#block-menu-menu-legal-menu .block-inner {
+#block-menu-menu-legal-menu .block-inner,
+#block-menu-menu-copyright-menu  .block-inner {
     margin: 0;
 }
 
 #block-menu-menu-meta-menu ul.menu,
 #block-system-user-menu ul.menu,
-#block-menu-menu-legal-menu ul.menu {
+#block-menu-menu-legal-menu ul.menu,
+#block-menu-menu-copyright-menu ul.menu {
     list-style-type:none;
     margin:0;
     padding:0;
 }
 
-#block-menu-menu-meta-menu ul.menu li,
-#block-system-user-menu ul.menu li {
-    display:inline;
+#block-menu-menu-meta-menu ul.menu li {
+    display:inline-block;
     margin: 0;
     padding: 0 0.625em;
     border-left: 1px solid #808080;
 }
-#block-menu-menu-meta-menu ul.menu li:first-child,
-#block-system-user-menu ul.menu li:first-child {
+#block-menu-menu-meta-menu ul.menu li:first-child {
     border: none;
 }
-#block-menu-menu-legal-menu ul.menu li {
+#block-menu-menu-legal-menu ul.menu li,
+#block-menu-menu-copyright-menu ul.menu li,
+#block-system-user-menu ul.menu li {
     display:inline;
     margin: 0;
     padding-right: 1em;
     float: left;
 }
-#block-menu-menu-legal-menu ul.menu li.last {
-    float: right;
-}
 
 #block-menu-menu-meta-menu ul.menu li a,
 #block-system-user-menu ul.menu li a,
-#block-menu-menu-legal-menu ul.menu li a {
+#block-menu-menu-legal-menu ul.menu li a,
+#block-menu-menu-copyright-menu ul.menu li a {
     color: #222;
 }
 
 #block-menu-menu-meta-menu ul.menu li a:hover,
 #block-system-user-menu ul.menu li a:hover,
-#block-menu-menu-legal-menu ul.menu li a:hover {
+#block-menu-menu-legal-menu ul.menu li a:hover,
+#block-menu-menu-copyright-menu ul.menu li a:hover {
     color: #808080;
+}
+
+/* Stars on legal and user menu */
+#block-system-user-menu ul.menu li a:before,
+#block-menu-menu-legal-menu ul.menu li a:before,
+#block-menu-menu-copyright-menu ul.menu li a:before {
+    font-family: FontAwesome;
+    content: "\f006";
+    padding-right: 1em;
+    color: #222;
+}
+#block-system-user-menu ul.menu li a:hover:before,
+#block-menu-menu-legal-menu ul.menu li a:hover:before,
+#block-menu-menu-copyright-menu ul.menu li a:hover:before {
+    font-family: FontAwesome;
+    content: "\f005";
+    padding-right: 1em;
+    color: #222;
 }
 
 
@@ -1012,111 +1014,267 @@ tr.even td.active {
 /* =============================================================================
  *
  *
- *      Site specific element styling starts here...
+ *      Common Blocks starts here...
  *
  *
  * ========================================================================== */
 
-/* ==================================================================================
- *   Page styling
- * ================================================================================== */
-/*
- *  Front page
- */
-
-
-/*
- *  Basic page content type (entry pages for sections)
- */
-body.page-node article.node-page.view-mode-full {
-    /* center intro pages */
-    width: 20.25em; /* 324px */
-    margin: 5em auto;
-    border: 2px solid #808080;
+/* =============================================================================
+ *   Follow block
+ * ========================================================================== */
+#block-follow-site .block-inner {
+    margin: 0;
 }
-body.page-node article.node-page.view-mode-full .region-inner {
-    margin: 1.25em;
+#block-follow-site .follow-links {
+    max-width: 50em;
+    margin: 0 auto;
+    text-align: center;
+}
+#block-follow-site .follow-links a.follow-link {
+    float: none;
+    display: inline-block;
+    background-image: none !important;
+    padding: 0.1em 0.5em;
+    height: auto;
+    font-size: 1.5em;
+    line-height: 1.5;
+    color: #222;
+    border: solid 0.08em #222;
+    border-radius: .1em;
+}
+#block-follow-site .follow-links .follow-link-this-site:after {
+    font-family: FontAwesome;
+    content: "\f09e";
+}
+#block-follow-site .follow-links .follow-link-facebook:after {
+    font-family: FontAwesome;
+    content: "\f09a";
+}
+#block-follow-site .follow-links .follow-link-googleplus:after {
+    font-family: FontAwesome;
+    content: "\f0d5";
+}
+#block-follow-site .follow-links .follow-link-xing:after {
+    font-family: FontAwesome;
+    content: "\f168";
+}
+#block-follow-site .follow-links .follow-link-linkedin:after {
+    font-family: FontAwesome;
+    content: "\f0e1";
 }
 
+/* =============================================================================
+ *   ShareThis links block
+ * ========================================================================== */
+.block-sharethis .block-inner {
+    margin: 0;
+}
+.block-sharethis .block-inner .sharethis-wrapper {
+    max-width: 50em;
+    margin: 0 auto;
+    text-align: center;
+}
+.sharethis-wrapper > span .stButton .stLarge {
+    background-image: none !important;
+    font-size: 2em;
+    color: #222;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+.st_facebook_large .stButton .stLarge:before {
+    font-family: FontAwesome;
+    content: "\f09a";
+    display: inline-block;
+    padding: 0;
+}
+.st_twitter_large .stButton .stLarge:before {
+    font-family: FontAwesome;
+    content: "\f099";
+    display: inline-block;
+    padding: 0;
+}
+.st_googleplus_large .stButton .stLarge:before {
+     font-family: FontAwesome;
+     content: "\f0d5";
+     display: inline-block;
+     padding: 0;
+}
+.st_pinterest_large .stButton .stLarge:before {
+    font-family: FontAwesome;
+    content: "\f0d2";
+    display: inline-block;
+    padding: 0;
+}
+.st_sharethis_large .stButton .stLarge:before {
+    font-family: FontAwesome;
+    content: "\f1e0";
+    display: inline-block;
+    padding: 0;
+}
 
 
 /* =============================================================================
- *   jQuery accordion
+ *
+ *
+ *      jQuery UI (1.10 up) / other widgets starts here...
+ *
+ *
+ * ========================================================================== */
+
+/* =============================================================================
+ *   General settings (header, content, border, corner, states, icon)
+ * ========================================================================== */
+.ui-widget {
+    font-family: inherit;
+    font-size: 1em;
+    margin: 0.5em 0 1em;
+}
+.ui-widget-header {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 1em;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #222;
+    text-decoration: none;
+    background: none;
+    border: 1px solid #ccc;
+}
+.ui-widget-content {
+    color: #222222;
+    background: none;
+    border: 1px solid #ccc;
+}
+
+/* corners */
+.ui-corner-all, .ui-corner-top, .ui-corner-right, .ui-corner-tr {
+    border-top-right-radius: 0.25em;
+}
+.ui-corner-all, .ui-corner-top, .ui-corner-left, .ui-corner-tl {
+    border-top-left-radius: 0.25em;
+}
+.ui-corner-all, .ui-corner-bottom, .ui-corner-right, .ui-corner-br {
+    border-bottom-right-radius: 0;
+}
+.ui-corner-all, .ui-corner-bottom, .ui-corner-left, .ui-corner-bl {
+    border-bottom-left-radius: 0;
+}
+
+/* states */
+.ui-state-default,
+.ui-widget-content .ui-state-default,
+.ui-widget-header .ui-state-default {
+    font-weight: 400;
+    color: #808080;
+    border: 1px solid #bbb;
+    background: #ddd none;
+}
+.ui-state-active,
+.ui-widget-content .ui-state-active,
+.ui-widget-header .ui-state-active {
+    font-weight: 400;
+    color: #222;
+    border: 1px solid #ccc;
+    background: #fff none;
+}
+.ui-widget .ui-state-default a, .ui-widget .ui-state-default a:link, .ui-widget .ui-state-default a:visited {
+    color: #808080;
+    text-decoration: none;
+    outline: none;
+}
+.ui-widget .ui-state-active a, .ui-widget .ui-state-active a:link, .ui-widget .ui-state-active a:visited {
+    color: #222;
+    text-decoration: none;
+    outline: none;
+}
+.ui-widget .ui-state-hover a, .ui-widget .ui-state-hover a:hover, .ui-widget .ui-state-hover a:link, .ui-widget .ui-state-hover a:visited {
+    color: #222;
+    text-decoration: none;
+}
+
+/* Icons */
+.ui-widget .ui-icon {
+    display: none;
+}
+
+/* =============================================================================
+ *   jQuery / Quicktabs Tabs
+ * ========================================================================== */
+.ui-tabs,
+.quicktabs-ui-wrapper {
+    position: relative;
+    padding: 0.2em;
+}
+.ui-tabs .ui-tabs-nav {
+    margin: 0;
+    padding: 0.2em 0.2em 0;
+    border-width: 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.ui-tabs .ui-tabs-nav li {
+    position: relative;
+    float: left;
+    list-style: none;
+    margin: 1px 0.2em 0 0;
+    padding: 0;
+    top: 0;
+    white-space: nowrap;
+    border-bottom-width: 0;
+}
+.ui-tabs .ui-tabs-nav li.ui-tabs-active {
+    margin-bottom: -1px;
+    padding-bottom: 1px;
+}
+
+.ui-tabs .ui-tabs-nav li a {
+    float: left;
+    padding: 0.5em 1em;
+    text-decoration: none;
+    outline: none;
+}
+
+.ui-tabs .ui-tabs-panel {
+    display: block;
+    padding: 1em 1.4em;
+    border-width: 0;
+    background: none;
+}
+
+/* =============================================================================
+ *   jQuery / Quicktabs Accordion
  * ========================================================================== */
 /* accordion headers */
 .ui-accordion {
     font-size: 1em;
 }
-.ui-accordion .ui-accordion-header .ui-icon {display: none}
-
-.ui-accordion .ui-accordion-header.ui-state-active,
-.ui-accordion .ui-accordion-header.ui-state-default {
-    padding: 0;
-    margin: 0;
-    border: none;
-    border-radius: 0;
-    -webkit-border-radius: 0;
-    -moz-border-radius: 0;
-    background: rgba(115,133,119,0.5) none;
-}
-
-.ui-accordion .ui-accordion-header.ui-state-active a,
-.ui-accordion .ui-accordion-header.ui-state-default a {
+.ui-accordion .ui-accordion-header {
+    position: relative;
+    cursor: pointer;
     display: block;
-    vertical-align: middle;
-    font-size: 1em;
-    line-height: 2.5em;
-    color: #222;
-    border-radius: 0;
-    -webkit-border-radius: 0;
-    -moz-border-radius: 0;
-    background: rgba(115,133,119,1.0) none;
-}
-.ui-accordion .ui-accordion-header.ui-state-default a {
-    border-bottom: 1px solid #fff;
+    margin-top: 0.2em;
+    padding: 0.5em 0.5em 0.5em 0.7em;
+    min-height: 0;
+    background: #ddd none;
 }
 
-.ui-accordion .ui-accordion-header.ui-state-active a:before,
+.ui-accordion .ui-accordion-header.ui-state-active {
+    background: #eee none;
+}
 .ui-accordion .ui-accordion-header.ui-state-default a:before {
     content: '\f054';
     font-family: "fontawesome";
     font-weight: normal;
     padding: 0 0.5em;
-    color: #222;
+    color: #808080;
 }
-.ui-accordion .ui-accordion-header.ui-state-active a:before {
+.ui-accordion .ui-accordion-header.ui-state-active a:before,
+.ui-accordion .ui-accordion-header.ui-state-hover a:before {
     content: '\f078';
     font-family: "fontawesome";
-}
-
-.ui-accordion .ui-accordion-header.ui-state-active a:hover,
-.ui-accordion .ui-accordion-header.ui-state-default a:hover {
-    color: #808080;
-}
-
-.ui-accordion .ui-accordion-content {
-    padding: 1em 0;
-    color: #808080;
-    border: 1px solid #fff;
-    border-radius: 0;
-    -webkit-border-radius: 0;
-    -moz-border-radius: 0;
-    background: rgba(241, 238, 231, 1.0) none;
+    font-weight: normal;
+    padding: 0 0.35em;
+    color: #222;
 }
 
 
@@ -1251,6 +1409,47 @@ body.page-node article.node-page.view-mode-full .region-inner {
     padding: 0.3em;
     background-color: rgba(255,255,255,0.8);
 }
+
+
+/* =============================================================================
+ *
+ *
+ *      Site specific element styling starts here...
+ *
+ *
+ * ========================================================================== */
+
+/* ==================================================================================
+ *   Page styling
+ * ================================================================================== */
+/*
+ *  Front page
+ */
+
+
+/*
+ *  Basic page content type (entry pages for sections)
+ */
+body.page-node article.node-page.view-mode-full {
+    /* center intro pages */
+    width: 20.25em; /* 324px */
+    margin: 5em auto;
+    border: 2px solid #808080;
+}
+body.page-node article.node-page.view-mode-full .region-inner {
+    margin: 1.25em;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 /* =============================================================================

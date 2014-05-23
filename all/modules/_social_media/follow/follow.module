@@ -389,6 +389,7 @@ function theme_follow_link($variables) {
   $attributes = array(
     'class' => $classes,
     'title' => follow_link_title($link->uid) .' '. $title,
+    'target' => '_blank',
   );
   // Clean up the blank titles.
   if ($title == '<none>') {
