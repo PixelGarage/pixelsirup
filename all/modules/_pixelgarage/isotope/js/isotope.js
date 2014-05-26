@@ -73,22 +73,12 @@
                                 groupHeight = $childButtonGroup.outerHeight(true);
 
                             if ($childButtonGroup.is(':hidden')) {
-                                // check, if other button group is visible, close it
-                                var $openSibling = $clickedButton.siblings('.visible-group'),
-                                    sgHeight = 0;
-                                if ($openSibling.length > 0) {
-                                    var $siblingGroup = $openSibling.find('>div.button-group');
-                                    sgHeight = $siblingGroup.outerHeight(true);
-                                    $openSibling.removeClass('visible-group');
-                                    $siblingGroup.hide();
-                                }
-
                                 // slide down and set group visible
                                 $childButtonGroup.css({"top": topPos + "px"}).slideDown();
                                 $clickedButton.addClass('visible-group');
 
                                 // set container height
-                                $button_container.height(topGroupHeight + groupHeight - sgHeight);
+                                $button_container.height(topGroupHeight + groupHeight);
 
                             } else {
                                 $childButtonGroup.slideUp();
@@ -138,6 +128,19 @@
 
                     }
 
+                    // check, if other button group of same level is visible, close it
+                    var $openSibling = $clickedButton.siblings('.visible-group'),
+                        containerHeight = $button_container.height(),
+                        sgHeight = 0;
+                    if ($openSibling.length > 0) {
+                        var $siblingGroup = $openSibling.find('>div.button-group');
+                        sgHeight = $siblingGroup.outerHeight(true);
+                        $openSibling.removeClass('visible-group');
+                        $siblingGroup.slideUp();
+                        $button_container.height(containerHeight - sgHeight);
+                    }
+
+                    // create resulting filter for all filter container
                     groupFilterColl[buttonContainerId] = groupFilter;
 
                     // combine button container filters
@@ -388,11 +391,8 @@
                 var elemH = elem.height(),
                     elemTop = elem.offset().top,
                     elemBottom = elemTop + elemH,
-                    viewedH = $(window).height() + window.scrollY;
-                var inViewport = ( (elemTop + elemH * threshold) <= viewedH ) && ( (elemBottom - elemH * threshold) >= window.scrollY );
-                if (!inViewport) {
-                    console.log('In viewport height = ' + viewedH);
-                }
+                    viewedH = $(window).height() + window.scrollY,
+                    inViewport = ( (elemTop + elemH * threshold) <= viewedH ) && ( (elemBottom - elemH * threshold) >= window.scrollY );
                 return inViewport;
             },
             _uncoverItems = function () {
