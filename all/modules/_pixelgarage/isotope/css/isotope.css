@@ -119,7 +119,7 @@
 .ui-group .top-button-group {
     position: relative;
 }
-.ui-group .button-group {
+.ui-group .filters.button-group {
     /* absolute positioning of subgroup relative to top-group is done in java script */
     display: none;
     position: absolute;
@@ -154,6 +154,44 @@
 .filters .button:active,
 .filters .button.selected,
 .filters .button.active-trail {
+    color: #FFFFFF;
+    text-shadow: 0 -1px rgba(0, 0, 0, 0.8);
+    background-color: #ff8200;
+}
+
+
+/* ========================================================================
+ * Use these styling elements to style the Isotope sort button groups
+ * ======================================================================== */
+
+.ui-group .sorting.button-group {
+    display: inline-block;
+}
+
+.sorting .button {
+    display: inline-block;
+    float: left; /* corrects spaces between buttons*/
+    cursor: pointer;
+    margin-left: 1px;
+    padding: 0.5em 1em;
+    color: #222222;
+    font-weight: 500;
+    text-shadow: 0 1px #FFFFFF;
+    line-height: 1.2;
+    border: medium none;
+    outline: none;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2)) repeat scroll 0 0 #EEEEEE;
+}
+.sorting .button:first-child {
+    border-radius: 0.2em 0 0 0.2em;
+    margin-left: 0;
+}
+.sorting .button:last-child {
+    border-radius: 0 0.2em 0.2em 0;
+}
+
+.sorting .button:active,
+.sorting .button.selected {
     color: #FFFFFF;
     text-shadow: 0 -1px rgba(0, 0, 0, 0.8);
     background-color: #ff8200;
