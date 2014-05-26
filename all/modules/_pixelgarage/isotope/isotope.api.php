@@ -1,9 +1,12 @@
 <?php
 /**
  * @file
- * Hooks provided by Isotope.
+ * Hooks provided by Isotope API.
  */
 
+/* -----------------------------------------------------------------
+ *  Isotope layout hooks
+ * ----------------------------------------------------------------- */
 /**
  * Alter Isotope's default layout options.
  *
@@ -43,6 +46,34 @@ function hook_isotope_layout_options_form_alter(&$form, $default_values) {
 }
 
 /**
+ * Alter the Isotope layout script (files and js settings).
+ *
+ * @param $js_settings
+ *   A reference to an array of Isotope settings to send to the script file.
+ * @param $script_file
+ *   A path to the javascript file that triggers Isotope.
+ * @param $context
+ *   An associative array of additional variables.
+ *   Contains:
+ *   - container: The CSS selector of the container element to apply Isotope to.
+ *   - options: An associative array of Isotope options. See isotope_apply().
+ */
+function hook_isotope_layout_script_alter(&$js_settings, &$script_file, $context) {
+  $container = $context['container'];
+  $options = $context['options'];
+
+  // Send easing option to the script file
+  $js_settings['isotope'][$container]['animation_easing'] = $options['isotope_animation_easing'];
+
+  // Use a custom javascript file that includes easing in the animationOptions
+  $script_file = drupal_get_path('module', 'isotope') . '/js/isotope.js';
+}
+
+
+/* -----------------------------------------------------------------
+ *  Isotope sort hooks
+ * ----------------------------------------------------------------- */
+/**
  * Alter Isotope's default sort options.
  *
  * @param $options
@@ -64,6 +95,26 @@ function hook_isotope_sort_options_form_alter(&$form, $default_values) {
 
 }
 
+/**
+ * Alter the Isotope sort script (js settings).
+ *
+ * @param $js_settings
+ *   A reference to an array of Isotope settings to send to the script file.
+ * @param $context
+ *   An associative array of additional variables.
+ *   Contains:
+ *   - button_group: The CSS selector of the sort button group element.
+ *   - options: An associative array of Isotope options. See isotope_sort_apply().
+ */
+function hook_isotope_sort_script_alter (&$js_settings, $context){
+  $button_group = $context['button_group'];
+  $options = $context['options'];
+
+}
+
+/* -----------------------------------------------------------------
+ *  Isotope filter hooks
+ * ----------------------------------------------------------------- */
 /**
  * Alter Isotope's default filter options.
  *
@@ -87,26 +138,18 @@ function hook_isotope_filter_options_form_alter(&$form, $default_values) {
 }
 
 /**
- * Alter the Isotope script.
+ * Alter the Isotope filter script (js settings).
  *
  * @param $js_settings
- *   An array of Isotope options to send to the script file.
- * @param $script_file
- *   A path to the javascript file that triggers Isotope.
+ *   A reference to an array of Isotope settings to send to the script file.
  * @param $context
  *   An associative array of additional variables.
  *   Contains:
- *   - container: The CSS selector of the container element to apply Isotope to.
- *   - options: An associative array of Isotope options. See isotope_apply().
+ *   - button_group: The CSS selector of the filter button group element.
+ *   - options: An associative array of Isotope options. See isotope_filter_apply().
  */
-function hook_isotope_script_alter(&$js_settings, &$script_file, $context) {
-  $container = $context['container'];
+function hook_isotope_filter_script_alter (&$js_settings, $context){
+  $button_group = $context['button_group'];
   $options = $context['options'];
 
-  // Send easing option to the script file
-  $js_settings['isotope'][$container]['animation_easing'] = $options['isotope_animation_easing'];
-
-  // Use a custom javascript file that includes easing in the animationOptions
-  $script_file = drupal_get_path('module', 'isotope') . '/js/isotope.js';
 }
-

@@ -79,9 +79,9 @@ function isotope_loaded() {
   }
 }
 
-//
-//  Isotope layout functions
-//
+/* -----------------------------------------------------------------
+ *  Isotope layout functions
+ * ----------------------------------------------------------------- */
 
   /**
  * Get default Isotope layout options.
@@ -274,12 +274,12 @@ function isotope_layout_apply($container, $options = array()) {
       $layout_file = '/layout-modes/horizontal.js';
     }
 
-    // Allow other modules to alter the Isotope script
+    // Allow other modules to alter the Isotope layout script
     $context = array(
       'container' => $container,
       'options' => $options,
     );
-    drupal_alter('isotope_script', $js_settings, $script_file, $context);
+    drupal_alter('isotope_layout_script', $js_settings, $script_file, $context);
 
     // Apply the needed files and js settings
     drupal_add_js($js_settings, 'setting');
@@ -294,9 +294,9 @@ function isotope_layout_apply($container, $options = array()) {
 }
 
 
-//
-//  Isotope filter functions
-//
+/* -----------------------------------------------------------------
+ *  Isotope filter functions
+ * ----------------------------------------------------------------- */
 
 /**
  * Get default Isotope filter options.
@@ -307,12 +307,14 @@ function isotope_layout_apply($container, $options = array()) {
  * isotope_filter_title:          Defines the title of the filter button group
  * isotope_filter_reset_label:    Label of the reset button. When set to <none>, the reset button is hidden (not recommended for multi-level filtering)
  * isotope_filter_multi_select:   TRUE means, more than one button in the filter group can be selected at a time. Reset is done with the 'Show All' button (when present).
+ * isotope_filter_render_flat:   TRUE means, a hierarchical taxonomy vocabulary is rendered as flat button group. Has no meaning for flat taxonomies.
  */
 function isotope_filter_default_options() {
   $options = array(
     'isotope_filter_title' => 'Filter',
     'isotope_filter_reset_label' => 'Show all',
     'isotope_filter_multi_select' => false,
+    'isotope_filter_render_flat' => false,
   );
 
   // Allow other modules to alter the default options
@@ -332,27 +334,34 @@ function isotope_filter_default_options() {
 function isotope_add_filter_options_to_form(&$form, $default_values) {
   $form['isotope_filter_title'] = array(
     '#type' => 'textfield',
-    '#title' => t('Button group title'),
+    '#title' => t('Filter group title'),
     '#default_value' => $default_values['isotope_filter_title'],
-    '#description' => t('Give the button group a title (default: Filter).'),
+    '#description' => t('Give the filter group a title (default: Filter). When set to &lt;none&gt;, the group title is hidden.'),
     '#size' => 20,
     '#maxlength' => 20,
     '#required' => FALSE,
   );
   $form['isotope_filter_reset_label'] = array(
     '#type' => 'textfield',
-    '#title' => t('Reset button label'),
+    '#title' => t('Filter reset button label'),
     '#default_value' => $default_values['isotope_filter_reset_label'],
-    '#description' => t('Define the label for the reset button. When set to &lt;none&gt;, the reset button is hidden. This is not recommended for multi-level filtering. (default: Show all).'),
+    '#description' => t('Define the label for the filter reset button. When set to &lt;none&gt;, the reset button is hidden. This is not recommended for multi-level filtering. (default: Show all).'),
     '#size' => 20,
     '#maxlength' => 20,
     '#required' => FALSE,
   );
   $form['isotope_filter_multi_select'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Multi-selection'),
-    '#description' => t("Allow multiple buttons to be selected in a button group (OR filtering). Reset with the 'Show All' button."),
+    '#title' => t('Allow multiple filter selection'),
+    '#description' => t("Allows the selection of multiple filters in a button group (shows all items containing at least one activated filter term). Reset with the 'Show All' button."),
     '#default_value' => $default_values['isotope_filter_multi_select'],
+    '#required' => FALSE,
+  );
+  $form['isotope_filter_render_flat'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Render flat filter group'),
+    '#description' => t("Renders a hierarchical taxonomy vocabulary as a flat filter button group (default: false). This value has no effect for flat taxonomies."),
+    '#default_value' => $default_values['isotope_filter_render_tree'],
     '#required' => FALSE,
   );
 
@@ -379,12 +388,24 @@ function isotope_filter_apply($button_group_id, $options = array()) {
       ),
     ),
   );
+
+  // Allow other modules to alter the Isotope filter script
+  $context = array(
+    'button_group' => $button_group_id,
+    'options' => $options,
+  );
+  drupal_alter('isotope_filter_script', $js_settings, $context);
+
+  // add script
   drupal_add_js($js_settings, 'setting');
+
+  // make sure jQuery effects is loaded
+  drupal_add_library('system', 'effects');
 }
 
-//
-//  Isotope sort functions
-//
+/* -----------------------------------------------------------------
+ *  Isotope sort functions
+ * ----------------------------------------------------------------- */
 
 /**
  * Get default Isotope sort options.
@@ -476,5 +497,14 @@ function isotope_sort_apply($button_group_id, $options = array()) {
       ),
     ),
   );
+
+  // Allow other modules to alter the Isotope sort script
+  $context = array(
+    'button_group' => $button_group_id,
+    'options' => $options,
+  );
+  drupal_alter('isotope_sort_script', $js_settings, $context);
+
+  // add script
   drupal_add_js($js_settings, 'setting');
 }

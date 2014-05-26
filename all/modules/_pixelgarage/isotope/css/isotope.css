@@ -105,7 +105,7 @@
  * ======================================================================== */
 
 .ui-group {
-    display: inline-block;
+    display: block;
     margin: 0 0.5em 0.5em 0;
 }
 .ui-group h3 {
@@ -116,12 +116,22 @@
     line-height: 2;
     vertical-align: top;
 }
+.ui-group .top-button-group {
+    position: relative;
+}
 .ui-group .button-group {
-    display: inline-block;
+    /* absolute positioning of subgroup relative to top-group is done in java script */
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0.5em 0;
+    white-space: nowrap;
 }
 
-.button-group button {
-    float: left;
+.filters .button {
+    display: inline-block;
+    float: left; /* corrects spaces between buttons*/
     cursor: pointer;
     margin-left: 1px;
     padding: 0.5em 1em;
@@ -133,16 +143,17 @@
     outline: none;
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2)) repeat scroll 0 0 #EEEEEE;
 }
-.button-group button:first-child {
+.filters .button:first-child {
     border-radius: 0.2em 0 0 0.2em;
     margin-left: 0;
 }
-.button-group button:last-child {
+.filters .button:last-child {
     border-radius: 0 0.2em 0.2em 0;
 }
 
-.button-group button:active,
-.button-group button.selected {
+.filters .button:active,
+.filters .button.selected,
+.filters .button.active-trail {
     color: #FFFFFF;
     text-shadow: 0 -1px rgba(0, 0, 0, 0.8);
     background-color: #ff8200;

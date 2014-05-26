@@ -15,7 +15,7 @@ function isotope_filter_views_views_plugins() {
         'handler' => 'views_plugin_style_isotope_filter_views',
         'uses options' => TRUE,
         'help' => t("Display a filter button group for an Isotope layout."),
-        'theme' => 'views_view_isotope_filter', // theme hook
+        'theme' => 'isotope_filter_tree', // theme hook
         'type' => 'normal',
         'uses row plugin' => TRUE,
         'uses row class' => TRUE,

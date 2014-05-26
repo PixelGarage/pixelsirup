@@ -27,7 +27,7 @@
         // Attach filter button events: only available, if items are filterable and filter buttons exist on page
         //
         try {
-          // check if filterable items and filter button groups have been defined
+          // check if filterable items and filter button containers have been defined
           var $filterButtons = Drupal.settings.isotope_filter;
           var hasFilterButtons = (typeof $filterButtons != 'undefined') && Object.keys($filterButtons).length > 0;
 
@@ -35,33 +35,78 @@
             // contains combined filters of each button group
             var groupFilterColl = {};
 
-            // Iterate through all available filter button groups and add button click events
-            $.each($filterButtons, function (buttonGroup, filterSettings) {
+            // Iterate through all available filter button containers and add button click events
+            $.each($filterButtons, function (buttonContainerId, filterSettings) {
                 //
                 // get button group with given id
-                var $button_group = $('#' + buttonGroup);
+                var $button_container = $('#' + buttonContainerId);
                 var groupFilter = [],
                     resetButtonSelection = function () {
-                        $button_group.find('button.selected').removeClass('selected');
+                        $button_container.find('.button.selected').removeClass('selected');
+                        $button_container.find('.button.active-trail').removeClass('active-trail');
                     };
 
                 //
                 // attach button events
-                $button_group.on('click', 'button', function() {
+                $button_container.on('click', '.button', function(ev) {
                     // disable uncover animation for all items
                     _disableUncoverAnimation();
 
                     // create filter value and update button selection
                     var dataFilter,
-                        $clickedButton = $(this);
+                        $clickedButton = $(this),
+                        $childButtonGroup = $clickedButton.find('>div.button-group');
 
                     if ($clickedButton.hasClass('reset')) {
+                        //
                         // reset filter and clicked buttons
                         groupFilter = [];
                         resetButtonSelection();
                         $clickedButton.addClass('selected');
 
+                    } else if ($childButtonGroup.length > 0) {
+                        //
+                        // slide down/up child button group if this is the clicked button (not bubble event)
+                        if (ev.target == this) {
+                            var topPos = $clickedButton.outerHeight(),
+                                topGroupHeight = $button_container.height(),
+                                groupHeight = $childButtonGroup.outerHeight(true);
+
+                            if ($childButtonGroup.is(':hidden')) {
+                                // check, if other button group is visible, close it
+                                var $openSibling = $clickedButton.siblings('.visible-group'),
+                                    sgHeight = 0;
+                                if ($openSibling.length > 0) {
+                                    var $siblingGroup = $openSibling.find('>div.button-group');
+                                    sgHeight = $siblingGroup.outerHeight(true);
+                                    $openSibling.removeClass('visible-group');
+                                    $siblingGroup.hide();
+                                }
+
+                                // slide down and set group visible
+                                $childButtonGroup.css({"top": topPos + "px"}).slideDown();
+                                $clickedButton.addClass('visible-group');
+
+                                // set container height
+                                $button_container.height(topGroupHeight + groupHeight - sgHeight);
+
+                            } else {
+                                $childButtonGroup.slideUp();
+                                $clickedButton.removeClass('visible-group');
+                                $button_container.height(topGroupHeight - groupHeight);
+                            }
+
+                        }
+
+                        // update active trail on button (also for bubbled events)
+                        if ($childButtonGroup.find('.button.selected').length > 0) {
+                            $clickedButton.addClass('active-trail');
+                        } else {
+                            $clickedButton.removeClass('active-trail');
+                        }
+
                     } else {
+                        //
                         // single or multiple selection inside button group
                         dataFilter = $clickedButton.attr('data-filter');
 
@@ -73,28 +118,30 @@
                             groupFilter.splice(index,  1); // remove element at index
 
                         } else {
-                            // add selection and filter
+                            // add the filter to the filterGroup array
                             if (filterSettings.filter_multi_select) {
                                 groupFilter.push(dataFilter);
                             } else {
                                 groupFilter = [dataFilter];
                                 resetButtonSelection();
                             }
+                            // add selection
                             $clickedButton.addClass('selected');
                         }
 
                         // add/remove 'selected' from 'Show All' button depending on selected filter(s)
                         if (groupFilter.length > 0) {
-                            $button_group.find('button.reset').removeClass('selected');
+                            $button_container.find('.button.reset').removeClass('selected');
                         } else {
-                            $button_group.find('button.reset').addClass('selected');
+                            $button_container.find('.button.reset').addClass('selected');
                         }
 
                     }
 
-                    groupFilterColl[buttonGroup] = groupFilter;
+                    groupFilterColl[buttonContainerId] = groupFilter;
 
-                    // combine button group filters (cartesian product: [.color1, .color2] X [.type1, .type2] = ".color1.type1, .color1.type2, .color2.type1, .color2.type2")
+                    // combine button container filters
+                    // (cartesian product: [.color1, .color2] X [.type1, .type2] = ".color1.type1, .color1.type2, .color2.type1, .color2.type2")
                     var first = [], result = [];
                     for (var group in groupFilterColl) {
                         // set first array of cartesian product
@@ -139,14 +186,14 @@
 
             if (settings.sort_enabled && hasSortButtons) {
 
-                // Iterate through  sort button groups (usually one) and add button click events
-                $.each($sortButtons, function (buttonGroup, sortSettings) {
+                // Iterate through  sort button containers (usually one) and add button click events
+                $.each($sortButtons, function (buttonContainerId, sortSettings) {
                     //
                     // get button group with given id
-                    var $button_group = $('#' + buttonGroup),
+                    var $sort_button_container = $('#' + buttonContainerId),
                         groupSortBy = [],
                         resetButtonSelection = function () {
-                            $button_group.find('button.selected').removeClass('selected');
+                            $sort_button_container.find('.button.selected').removeClass('selected');
                         },
                         updateItemSortClasses = function (attributes) {
                             var $items = $container.find('div.isotope-item');
@@ -160,7 +207,7 @@
 
                     //
                     // attach button events
-                    $button_group.on('click', 'button', function() {
+                    $sort_button_container.on('click', '.button', function() {
                         // disable uncover animation for all items
                         _disableUncoverAnimation();
 
@@ -199,9 +246,9 @@
 
                             // add/remove 'selected' from 'None' button depending on selected filter(s)
                             if (groupSortBy.length > 0) {
-                                $button_group.find('button.reset').removeClass('selected');
+                                $sort_button_container.find('.button.reset').removeClass('selected');
                             } else {
-                                $button_group.find('button.reset').addClass('selected');
+                                $sort_button_container.find('.button.reset').addClass('selected');
                             }
 
                             // add .unsorted class to all not sortable items (attribute is undefined)
