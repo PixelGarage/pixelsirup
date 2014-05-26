@@ -91,15 +91,16 @@ function theme_isotope_filter_tree($variables) {
 
   // check, if hierarchy information (relationship to parent term) is set in the view
   if (! property_exists($result[0], 'taxonomy_term_data_taxonomy_term_hierarchy_tid')) {
-    drupal_set_message(t('Error: Parent taxonomy term id not accessible. Please check if parent relationship in the Relationship section of the view is added and if the parent term id field in the Fields section is available.'), 'error');
-    return '';
-  }
+    $options['isotope_filter_render_flat'] = true; // force flat rendering
 
-  // set parent of the top level records to 0
-  foreach ($result as $i => $record) {
-    if ($record->taxonomy_term_data_taxonomy_term_hierarchy_tid == null) {
-      $result[$i]->taxonomy_term_data_taxonomy_term_hierarchy_tid = 0;
+  } else {
+    // set parent of the top level records to 0
+    foreach ($result as $i => $record) {
+      if ($record->taxonomy_term_data_taxonomy_term_hierarchy_tid == null) {
+        $result[$i]->taxonomy_term_data_taxonomy_term_hierarchy_tid = 0;
+      }
     }
+
   }
 
   // Recursively render each item.
