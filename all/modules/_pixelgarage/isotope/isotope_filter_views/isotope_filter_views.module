@@ -152,18 +152,19 @@ function theme_isotope_filter_tree_inner($variables) {
 
   $buttons = array();
   foreach ($result as $i => $record) {
-    $button_start = '<span class="button ' . $filters[$i] . '" data-filter=".' .  $filters[$i] . '">' . $rows[$i];
     if ($render_flat) {
       // render flat button group
-      $buttons[] = $button_start . '</span>';
+      $buttons[] = '<span class="button ' . $filters[$i] . '" data-filter=".' .  $filters[$i] . '">' . $rows[$i] . '</span>';
 
     } else {
       // render hierarchical button group, if parent info is available
       if ($record->taxonomy_term_data_taxonomy_term_hierarchy_tid == $parent) {
         $variables['parent'] = $record->tid;
-        $buttons[] = $button_start . theme_isotope_filter_tree_inner($variables) . '</span>';
-      }
+        $subgroup = theme_isotope_filter_tree_inner($variables);
+        $button_start = ($subgroup !== '') ? '<span class="button parent ' : '<span class="button ';
+        $buttons[] = $button_start . $filters[$i] . '" data-filter=".' .  $filters[$i] . '">' . $rows[$i] . $subgroup . '</span>';
 
+      }
     }
   }
 

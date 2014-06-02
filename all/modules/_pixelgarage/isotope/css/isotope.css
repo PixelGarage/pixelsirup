@@ -152,13 +152,26 @@
 }
 
 .filters .button:active,
-.filters .button.selected,
-.filters .button.active-trail {
+.filters .button.selected {
     color: #FFFFFF;
     text-shadow: 0 -1px rgba(0, 0, 0, 0.8);
     background-color: #ff8200;
 }
-
+.filters .button.active-trail {
+    color: #FFFFFF;
+    text-shadow: 0 -1px rgba(0, 0, 0, 0.8);
+    background-color: rgba(255,130,0,0.4);
+}
+.filters .button.parent.visible-children:after {
+    content: '-';
+    font-size: 1em;
+    padding-left: 0.3em;
+}
+.filters .button.parent:after {
+    content: '+';
+    font-size: 1em;
+    padding-left: 0.3em;
+}
 
 /* ========================================================================
  * Use these styling elements to style the Isotope sort button groups

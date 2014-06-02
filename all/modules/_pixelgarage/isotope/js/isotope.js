@@ -41,105 +41,123 @@
                 // get button group with given id
                 var $button_container = $('#' + buttonContainerId);
                 var groupFilter = [],
-                    resetButtonSelection = function () {
-                        $button_container.find('.button.selected').removeClass('selected');
-                        $button_container.find('.button.active-trail').removeClass('active-trail');
+                    resetButtonSelection = function (container) {
+                        container.find('.button.selected').each(function() {
+                            var dataFilter = $(this).attr('data-filter'),
+                                index = groupFilter.indexOf(dataFilter);
+                            if (index >= 0) groupFilter.splice(index,  1); // remove element at index
+                            $(this).removeClass('selected');
+                        });
+                    },
+                    updateResetButton = function() {
+                        // update reset button selection
+                        if ($button_container.find('.button.selected').length > 0) {
+                            $button_container.find('.button.reset').removeClass('selected');
+                        } else {
+                            $button_container.find('.button.reset').addClass('selected');
+                        }
                     };
 
                 //
                 // attach button events
                 $button_container.on('click', '.button', function(ev) {
-                    // disable uncover animation for all items
+                    // disable uncover animation for all items (prevent conflicts with filter animation)
                     _disableUncoverAnimation();
 
-                    // create filter value and update button selection
-                    var dataFilter,
-                        $clickedButton = $(this),
-                        $childButtonGroup = $clickedButton.find('>div.button-group');
+                    // create filter value
+                    var dataFilter = '',
+                        $clickedButton = $(this);
 
+                    // check first, if a parent button on the same level is active, close its child group if open
+                    // reset selection on siblings (and their children)
+                    var $activeSibling = $clickedButton.siblings('.active-trail');
+
+                    if ($activeSibling.length > 0) {
+                        resetButtonSelection($activeSibling);
+                        updateResetButton();
+                        $activeSibling.removeClass('active-trail');
+                        if ($activeSibling.hasClass('visible-children')) {
+                            var $siblingGroup = $activeSibling.find('>div.button-group'),
+                                containerHeight = $button_container.height(),
+                                sgHeight = $siblingGroup.outerHeight(true);
+                            $siblingGroup.slideUp(300);
+                            $button_container.height(containerHeight - sgHeight);
+                            $activeSibling.removeClass('visible-children');
+                        }
+                    }
+
+                    //
+                    // perform button action of clicked button (or one of its parent buttons (bubbling))
                     if ($clickedButton.hasClass('reset')) {
                         //
                         // reset filter and clicked buttons
+                        $button_container.find('.button.active-trail').removeClass('active-trail');
+                        $button_container.find('.button.selected').removeClass('selected');
                         groupFilter = [];
-                        resetButtonSelection();
                         $clickedButton.addClass('selected');
 
-                    } else if ($childButtonGroup.length > 0) {
+                    } else if ($clickedButton.hasClass('parent')) {
                         //
-                        // slide down/up child button group if this is the clicked button (not bubble event)
+                        // slide down/up child button group on direct event (not bubbling up) and set active-trail
+                        $childButtonGroup = $clickedButton.find('>div.button-group');
                         if (ev.target == this) {
+                            // direct event: toggle child button group and reset button selection
                             var topPos = $clickedButton.outerHeight(),
                                 topGroupHeight = $button_container.height(),
                                 groupHeight = $childButtonGroup.outerHeight(true);
 
                             if ($childButtonGroup.is(':hidden')) {
                                 // slide down and set group visible
-                                $childButtonGroup.css({"top": topPos + "px"}).slideDown();
-                                $clickedButton.addClass('visible-group');
+                                $childButtonGroup.css({"top": topPos + "px"}).slideDown(300);
+                                $clickedButton.addClass('visible-children');
 
                                 // set container height
                                 $button_container.height(topGroupHeight + groupHeight);
 
                             } else {
-                                $childButtonGroup.slideUp();
-                                $clickedButton.removeClass('visible-group');
+                                $childButtonGroup.slideUp(300);
+                                $clickedButton.removeClass('visible-children');
                                 $button_container.height(topGroupHeight - groupHeight);
                             }
 
-                        }
+                            // deselect reset button, because filter of this button is active
+                            // (usability: selection only on lowest level, no side-branches)
+                            $button_container.find('.button.reset').removeClass('selected');
 
-                        // update active trail on button (also for bubbled events)
-                        if ($childButtonGroup.find('.button.selected').length > 0) {
-                            $clickedButton.addClass('active-trail');
-                        } else {
-                            $clickedButton.removeClass('active-trail');
                         }
+                        // set also on parent buttons (during event bubbling)
+                        $clickedButton.addClass('active-trail');
 
                     } else {
                         //
-                        // single or multiple selection inside button group
+                        // set filter for single or multiple selection inside button group
                         dataFilter = $clickedButton.attr('data-filter');
 
                         // toggle clicked button and its filter
                         if ($clickedButton.hasClass('selected')) {
                             // remove selection and filter
-                            $clickedButton.removeClass('selected');
                             var index = groupFilter.indexOf(dataFilter);
-                            groupFilter.splice(index,  1); // remove element at index
+                            if (index >= 0) groupFilter.splice(index,  1); // remove element at index
+                            $clickedButton.removeClass('selected');
 
                         } else {
                             // add the filter to the filterGroup array
                             if (filterSettings.filter_multi_select) {
                                 groupFilter.push(dataFilter);
                             } else {
+                                $button_container.find('.button.selected').removeClass('selected');
                                 groupFilter = [dataFilter];
-                                resetButtonSelection();
                             }
                             // add selection
                             $clickedButton.addClass('selected');
                         }
 
-                        // add/remove 'selected' from 'Show All' button depending on selected filter(s)
-                        if (groupFilter.length > 0) {
-                            $button_container.find('.button.reset').removeClass('selected');
-                        } else {
-                            $button_container.find('.button.reset').addClass('selected');
-                        }
+                        // add/remove 'selected' from reset-button depending on other selected buttons
+                        updateResetButton();
 
                     }
 
-                    // check, if other button group of same level is visible, close it
-                    var $openSibling = $clickedButton.siblings('.visible-group'),
-                        containerHeight = $button_container.height(),
-                        sgHeight = 0;
-                    if ($openSibling.length > 0) {
-                        var $siblingGroup = $openSibling.find('>div.button-group');
-                        sgHeight = $siblingGroup.outerHeight(true);
-                        $openSibling.removeClass('visible-group');
-                        $siblingGroup.slideUp();
-                        $button_container.height(containerHeight - sgHeight);
-                    }
-
+                    //
                     // create resulting filter for all filter container
                     groupFilterColl[buttonContainerId] = groupFilter;
 
