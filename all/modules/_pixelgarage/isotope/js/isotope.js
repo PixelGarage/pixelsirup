@@ -22,7 +22,6 @@
         // Set container with class 'isotope'
         var $container = $(container).addClass('isotope');
 
-
         //
         // Attach filter button events: only available, if items are filterable and filter buttons exist on page
         //
@@ -62,7 +61,7 @@
                 // attach button events
                 $button_container.on('click', '.button', function(ev) {
                     // disable uncover animation for all items (prevent conflicts with filter animation)
-                    _disableUncoverAnimation();
+                    _uncoverAllItems();
 
                     // create filter value
                     var dataFilter = '',
@@ -99,25 +98,26 @@
                     } else if ($clickedButton.hasClass('parent')) {
                         //
                         // slide down/up child button group on direct event (not bubbling up) and set active-trail
-                        $childButtonGroup = $clickedButton.find('>div.button-group');
+                        var $childButtonGroup = $clickedButton.find('>div.button-group');
+
                         if (ev.target == this) {
                             // direct event: toggle child button group and reset button selection
-                            var topPos = $clickedButton.outerHeight(),
-                                topGroupHeight = $button_container.height(),
+                            var topGroupHeight = $button_container.outerHeight(true),
                                 groupHeight = $childButtonGroup.outerHeight(true);
 
                             if ($childButtonGroup.is(':hidden')) {
                                 // slide down and set group visible
-                                $childButtonGroup.css({"top": topPos + "px"}).slideDown(300);
+                                $childButtonGroup.css({"top": topGroupHeight + "px"}).slideDown(300);
                                 $clickedButton.addClass('visible-children');
 
-                                // set container height
+                                // adapt full container height
                                 $button_container.height(topGroupHeight + groupHeight);
 
                             } else {
-                                $childButtonGroup.slideUp(300);
-                                $clickedButton.removeClass('visible-children');
-                                $button_container.height(topGroupHeight - groupHeight);
+                                $childButtonGroup.slideUp(300, function(){
+                                    $button_container.removeAttr('style');
+                                    $clickedButton.removeClass('visible-children');
+                                });
                             }
 
                             // deselect reset button, because filter of this button is active
@@ -187,6 +187,17 @@
                     var filterValue = result.join(", ");
                     $container.isotope({ filter: filterValue });
                 });
+
+                // close open button groups during resize
+                $(window).on('resize', function() {
+                    // close open button group during resizing, if any
+                    var $open_parent = $button_container.find('.visible-children');
+                    $open_parent.find('>div.button-group').slideUp(100, function() {
+                        // delete top container height during resizing
+                        $button_container.removeAttr('style');
+                        $open_parent.removeClass('visible-children');
+                    });
+                });
             });
 
           }
@@ -230,7 +241,7 @@
                     // attach button events
                     $sort_button_container.on('click', '.button', function() {
                         // disable uncover animation for all items
-                        _disableUncoverAnimation();
+                        _uncoverAllItems();
 
                         // get sort value and update button selection
                         var dataSortBy,
@@ -298,9 +309,190 @@
 
 
         //
-        // Initialize Isotope container and item uncovering effect (animated uncovering of items during scrolling and resizing)
+        //
+        // Initialize Isotope container, infinite scrolling and item uncovering effect (animated uncovering of items during scrolling and resizing)
+        //
+        //
+        // Initialize infinite scrolling
+        //
+        var $items = $container.find('div.isotope-item'),
+            iscroll = Drupal.settings.isotope_iscroll,
+            infiniteScrollEnabled =  Object.keys(iscroll).length > 0,
+            hasNextPage = true;
+
+        if (infiniteScrollEnabled) {
+            var iScrollSettings = iscroll.all,
+                $nextPage = $container.parent().find(iScrollSettings.nextSelector).first(),
+                _viewClass = ' .' + iScrollSettings.viewClass,
+                _nextHref = $.trim($nextPage.find('a').attr('href') + _viewClass),
+                _loading = false,
+                _nextPageExists = function () {
+                    if (!_nextHref) {
+                        // cleanup, if no more pages are available
+                        $(window).off('.iscroll');
+                        $nextPage.off('.iscroll');
+                        hasNextPage = false;
+                    } else {
+                        _startWatching();
+                        hasNextPage = true;
+                    }
+                    return hasNextPage;
+                },
+                _load = function () {
+                    // start loading next page: clears next-container and adds loading html
+                    _loading = true;
+                    $nextPage.html('<div class="iscroll-loader">' + iScrollSettings.loadingHtml + '</div><div class="iscroll-page-loading" style="display:none"></div>');
+
+                    // load the next page
+                    setTimeout(function() {
+                        // load next page to hidden container
+                        $nextPage.find('.iscroll-page-loading').load(_nextHref, function(r, status, xhr) {
+                            if (status === 'error') {
+                                return $(window).off('.iscroll');
+                            }
+
+                            // extract isotope items and add them to isotope container
+                            var $this = $(this),
+                                $loadedItems = $this.find('div.isotope-item');
+                            $container.isotope( 'insert', $loadedItems );
+                            $container.imagesLoaded(function () {
+                                // layout items and show them (animated or direct)
+                                $container.isotope();
+                                if (uncoverEffectEnabled) {
+                                    _onScroll();
+                                } else {
+                                    _uncoverAllItems();
+                                }
+                                // remove loader gif
+                                $this.prev('.iscroll-loader').remove();
+                                _loading = false;
+                            });
+
+                            // add new link to nextPage container and check next href (page request)
+                            var $nextLink = $this.find(iScrollSettings.nextSelector + '>a');
+                            _nextHref = $nextLink.attr('href') ? $.trim($nextLink.attr('href') + _viewClass) : false;
+                            if (_nextPageExists()) {
+                                $this.before($nextLink);
+                            }
+
+                        });
+                    }, 20);
+                },
+                _startWatching = function () {
+                    // bind scroll event or next page click
+                    if (iScrollSettings.autoTrigger && (iScrollSettings.autoTriggerUntil === false || iScrollSettings.autoTriggerUntil > 0)) {
+                        // auto trigger enabled, bind scroll event
+                        $(window).off('.iscroll').on('scroll.iscroll', function() {
+                            var _containerBottomLine = $container.offset().top + $container.height() - iScrollSettings.padding,
+                                _documentBottomLine = $(window).height() + window.scrollY;
+                            // trigger page loading
+                            if (!_loading && (_containerBottomLine < _documentBottomLine)) {
+                                _load();
+                            }
+                        });
+
+                        if (iScrollSettings.autoTriggerUntil > 0) {
+                            iScrollSettings.autoTriggerUntil--;
+                        }
+
+                    } else {
+                        // manual trigger, bind click event
+                        $(window).off('.iscroll');
+                        $nextPage.off('.iscroll').on('click.iscroll', function() {
+                            _load();
+                            return false; // no propagation
+                        });
+                    }
+                };
+
+            // start watching infinite scrolling
+            _startWatching();
+        }
+
+
+        //
+        // Initialize item uncovering occurring during scrolling and resizing
+        //
+        var uncoverEffectEnabled = settings.uncover_effect_enabled,
+            uncoveredItems = 0,
+            isScrolling = false,
+            resizeTimeout = null,
+            // 0.0 = item is considered in the viewport as soon as it enters,
+            // 1.0 = item is considered in the viewport only when it's fully inside
+            threshold = 0.0,
+            _updateUncoveredStatus = function () {
+                var hasUncoveredPages = infiniteScrollEnabled && hasNextPage;
+                // checks if all items are uncovered and detach events, when true
+                uncoveredItems++;
+                if (!hasUncoveredPages && uncoveredItems >= $items.length) {
+                    $(window).off('.uncover');
+                }
+            },
+            _inViewport = function (elem) {
+                var elemH = elem.height(),
+                    elemTop = elem.offset().top,
+                    elemBottom = elemTop + elemH,
+                    viewedH = $(window).height() + window.scrollY,
+                    inViewport = ( (elemTop + elemH * threshold) <= viewedH ) && ( (elemBottom - elemH * threshold) >= window.scrollY );
+                return inViewport;
+            },
+            _uncoverItemsAnimated = function () {
+                // check each item to be uncovered with animation
+                if (infiniteScrollEnabled) {
+                    // update items in case of infinite scrolling (items are added)
+                    $items = $container.find('div.isotope-item');
+                }
+                $items.each(function () {
+                    var $this = $(this);
+                    if (!$this.hasClass('shown') && !$this.hasClass('animate') && _inViewport($this)) {
+                        var perspY = $(window).height() / 2 + window.scrollY;
+                        $this.css({
+                            perspectiveOrigin: '20% ' + perspY + 'px'
+                            /*animationDuration: '0.6s'   */
+                        });
+                        $this.addClass('animate');
+                        $this.one('webkitAnimationEnd oanimationend msAnimationEnd animationend', function () {
+                            // disable animation when finished
+                            $this.addClass('shown').removeClass('animate');
+                            _updateUncoveredStatus();
+                        });
+                    }
+                });
+                isScrolling = false;
+            },
+            _uncoverAllItems = function () {
+                // disables uncover animation and shows all items
+                if (infiniteScrollEnabled) {
+                    // update items in case of infinite scrolling (items could be added)
+                    $items = $container.find('div.isotope-item');
+                }
+                $items.each(function () {
+                    $(this).addClass('shown').removeClass('animate');
+                    _updateUncoveredStatus();
+                });
+            },
+            _onScroll = function () {
+                // uncover items on scrolling
+                if (!isScrolling) {
+                    isScrolling = true;
+                    setTimeout(function () { _uncoverItemsAnimated(); }, 60);
+                }
+            },
+            _onResize = function () {
+                // uncover items when resizing window
+                if (resizeTimeout) {
+                    clearTimeout(resizeTimeout); // clear timeout as long as resizing events occur
+                }
+                resizeTimeout = setTimeout(function () {
+                    _uncoverItems();
+                    resizeTimeout = null; // resize done
+                }, 1000);
+            };
+
+
         //
         // Set isotope options
+        //
         var $options = new Object();
         $options.containerStyle = {
             position: "relative"
@@ -387,78 +579,6 @@
 
 
         //
-        // Initialize item uncovering occurring during scrolling and resizing
-        //
-        var $items = $container.find('div.isotope-item'),
-            uncoverEffectEnabled = settings.uncover_effect_enabled,
-            uncoveredItems = 0,
-            isScrolling = false,
-            resizeTimeout = null,
-            // 0 = item is considered in the viewport as soon as it enters,
-            // 1 = item is considered in the viewport only when it's fully inside
-            threshold = 0.2,
-            _updateUncoveredStatus = function () {
-                // checks if all items are uncovered and detach events, when true
-                uncoveredItems++;
-                if (uncoveredItems >= $items.length) {
-                    $(window).off('scroll', _onScroll);
-                    $(window).off('resize', _onResize);
-                }
-            },
-            _inViewport = function (elem) {
-                var elemH = elem.height(),
-                    elemTop = elem.offset().top,
-                    elemBottom = elemTop + elemH,
-                    viewedH = $(window).height() + window.scrollY,
-                    inViewport = ( (elemTop + elemH * threshold) <= viewedH ) && ( (elemBottom - elemH * threshold) >= window.scrollY );
-                return inViewport;
-            },
-            _uncoverItems = function () {
-                // check each item to be uncovered
-                $items.each(function () {
-                    var $this = $(this);
-                    if (!$this.hasClass('shown') && !$this.hasClass('animate') && _inViewport($this)) {
-                        var perspY = $(window).height() / 2 + window.scrollY;
-                        $this.css({
-                            perspectiveOrigin: '20% ' + perspY + 'px'
-                            /*animationDuration: '0.6s'   */
-                        });
-                        $this.addClass('animate');
-                        _updateUncoveredStatus();
-                        $this.one('webkitAnimationEnd oanimationend msAnimationEnd animationend', function () {
-                            // disable animation when finished
-                            $this.addClass('shown').removeClass('animate');
-                        });
-                    }
-                });
-                isScrolling = false;
-            },
-            _disableUncoverAnimation = function () {
-                // disables uncover animation and shows all items
-                $items.each(function () {
-                    $(this).addClass('shown').removeClass('animate');
-                });
-            },
-            _onScroll = function () {
-                // uncover items on scrolling
-                if (!isScrolling) {
-                    isScrolling = true;
-                    setTimeout(function () { _uncoverItems(); }, 60);
-                }
-            },
-            _onResize = function () {
-                // uncover items when resizing window
-                if (resizeTimeout) {
-                    clearTimeout(resizeTimeout); // clear timeout as long as resizing events occur
-                }
-                resizeTimeout = setTimeout(function () {
-                    _uncoverItems();
-                    resizeTimeout = null; // resize done
-                }, 1000);
-            };
-
-
-        //
         // Apply Isotope to container, when document and images are loaded
         //
         $container.imagesLoaded(function () {
@@ -476,13 +596,13 @@
                   }
               });
 
-              // attach scroll and resize events
-              $(window).on('scroll', _onScroll);
-              $(window).on('resize', _onResize);
+              // start watching for uncovering items
+              $(window).on('scroll.uncover', _onScroll);
+              $(window).on('resize.uncover', _onResize);
 
           } else {
               // make all item visible at once
-              _disableUncoverAnimation();
+              _uncoverAllItems();
           }
 
         });

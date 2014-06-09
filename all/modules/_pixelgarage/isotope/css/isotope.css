@@ -99,6 +99,17 @@
     to { transform: translateY(0); opacity: 1; }
 }
 
+/* ========================================================================
+ * Use these styling elements to style the Isotope infinite scrolling pager
+ * ======================================================================== */
+#isotope-iscroll-next-page,
+#isotope-iscroll_views-ajax-loader {
+    text-align: center;
+}
+#isotope-iscroll-next-page {
+    cursor: pointer;
+    border: 1px solid #808080;
+}
 
 /* ========================================================================
  * Use these styling elements to style the Isotope Filter button groups

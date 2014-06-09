@@ -508,3 +508,65 @@ function isotope_sort_apply($button_group_id, $options = array()) {
   // add script
   drupal_add_js($js_settings, 'setting');
 }
+
+
+
+/* -----------------------------------------------------------------
+ *  Isotope infinite scroll functions
+ * ----------------------------------------------------------------- */
+
+/**
+ * Get default Isotope infinite scroll options.
+ *
+ * @return array An associative array of default infinite scroll options for Isotope.
+ *
+ * The following options are available:
+ * isotope_iscroll_auto_trigger:         Defines auto triggering
+ * isotope_iscroll_auto_trigger_until:   Defines auto triggering until a number of pages are loaded, after that manual triggering is enabled.
+ * isotope_iscroll_padding:              Defines the distance from the bottom at which to trigger the next page loading.
+ */
+function isotope_iscroll_default_options() {
+  $options = array(
+    'isotope_iscroll_auto_trigger' => true,
+    'isotope_iscroll_auto_trigger_until' => 0,
+    'isotope_iscroll_padding' => 0,
+  );
+
+  return $options;
+}
+
+/**
+ * Add Isotope infinite scrolling options to an existing form.
+ *
+ * @param $form
+ *   A form array to add Isotope infinite scrolling options to an existing form.
+ * @param $default_values
+ *   An array of default form values.
+ */
+function isotope_add_iscroll_options_to_form (&$form, $default_values) {
+  // fields for infinite scrolling definition
+  $form['isotope_iscroll_auto_trigger'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Auto trigger'),
+    '#description' => t('When set to true, triggers the loading of the next set of content automatically when the user scrolls to the bottom of the containing element. When set to false, the required next link will trigger the loading of the next set of content when clicked.'),
+    '#default_value' => $default_values['isotope_iscroll_auto_trigger'],
+  );
+  $form['isotope_iscroll_auto_trigger_until'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Auto trigger until page'),
+    '#description' => t('Set to an integer great than 0 to turn off autoTrigger of paging after the specified number of pages. Requires autoTrigger to be true.'),
+    '#default_value' => $default_values['isotope_iscroll_auto_trigger_until'],
+    '#size' => 10,
+    '#maxlength' => 5,
+  );
+  $form['isotope_iscroll_padding'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Bottom padding'),
+    '#description' => t('The distance from the bottom of the scrollable content at which to trigger the loading of the next set of content. This only applies when autoTrigger is set to true.'),
+    '#default_value' => $default_values['isotope_iscroll_padding'],
+    '#size' => 10,
+    '#maxlength' => 5,
+  );
+
+
+}
