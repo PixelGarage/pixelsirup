@@ -52,6 +52,7 @@ function picture_admin_breakpoints($form, &$form_state, $breakpoint_group_name =
 
   $image_styles = image_style_options(TRUE);
   $image_styles[PICTURE_EMPTY_IMAGE] = t('- empty image -');
+  $image_styles[PICTURE_ORIGINAL_IMAGE] = t('- original image -');
   foreach ($breakpoints as $breakpoint_name => $breakpoint) {
     $label = '1x ' . $breakpoint->name . ' [' . $breakpoint->breakpoint . ']';
     $form['picture_mapping']['mapping'][$breakpoint_name]['1x'] = array(
@@ -215,6 +216,7 @@ function picture_admin_settings($form, &$form_state) {
     '#type' => 'select',
     '#title' => t('Choose the javascript library to use'),
     '#options' => array(
+      PICTURE_IMPLEMENTATION_PICTUREFILL2 => 'picturefill 2.0',
       PICTURE_IMPLEMENTATION_PICTUREFILL => 'picturefill',
       PICTURE_IMPLEMENTATION_WEBLINC => 'weblinc',
     ),
