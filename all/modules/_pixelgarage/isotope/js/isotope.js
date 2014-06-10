@@ -317,7 +317,7 @@
         //
         var $items = $container.find('div.isotope-item'),
             iscroll = Drupal.settings.isotope_iscroll,
-            infiniteScrollEnabled =  Object.keys(iscroll).length > 0,
+            infiniteScrollEnabled =  (typeof iscroll != 'undefined') && Object.keys(iscroll).length > 0,
             hasNextPage = true;
 
         if (infiniteScrollEnabled) {
