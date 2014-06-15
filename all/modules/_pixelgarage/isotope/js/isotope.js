@@ -484,7 +484,7 @@
                     clearTimeout(resizeTimeout); // clear timeout as long as resizing events occur
                 }
                 resizeTimeout = setTimeout(function () {
-                    _uncoverItems();
+                    _uncoverItemsAnimated();
                     resizeTimeout = null; // resize done
                 }, 1000);
             };
