@@ -20,7 +20,7 @@
       // Iterate through all Isotope instances
       $.each(Drupal.settings.isotope, function (container, settings) {
         // Set container with class 'isotope'
-        var $container = $(container).addClass('isotope');
+        var $container = $(container);
 
         //
         // Attach filter button events: only available, if items are filterable and filter buttons exist on page
@@ -322,7 +322,7 @@
 
         if (infiniteScrollEnabled) {
             var iScrollSettings = iscroll.all,
-                $nextPage = $container.parent().find(iScrollSettings.nextSelector).first(),
+                $nextPage = $container.parent().parent().find(iScrollSettings.nextSelector).first(),
                 _viewClass = ' .' + iScrollSettings.viewClass,
                 _nextHref = $.trim($nextPage.find('a').attr('href') + _viewClass),
                 _loading = false,
@@ -345,14 +345,15 @@
 
                     // load the next page
                     setTimeout(function() {
-                        // load next page to hidden container
+
                         $nextPage.find('.iscroll-page-loading').load(_nextHref, function(r, status, xhr) {
+                            // load next page to hidden container
                             if (status === 'error') {
                                 return $(window).off('.iscroll');
                             }
 
                             // extract isotope items and add them to isotope container
-                            var $this = $(this),
+                            var $this = $(this),    // iscroll-page-loading
                                 $loadedItems = $this.find('div.isotope-item');
                             $container.isotope( 'insert', $loadedItems );
                             $container.imagesLoaded(function () {

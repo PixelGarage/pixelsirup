@@ -141,7 +141,7 @@ function template_preprocess_views_view_isotope(&$vars) {
   $vars['sort_attributes'] = $sort_attributes;
 
   // add additional isotope options for use in javascript
-  $container = '.view-' . drupal_clean_css_identifier($view->name) . '.view-display-id-' . $view->current_display . ' .view-content';
+  $container = '.view-' . drupal_clean_css_identifier($view->name) . '.view-display-id-' . $view->current_display . ' .isotope';
   $options['isotope_item_selector'] = '.isotope-item';
   $options['isotope_grid_sizer'] = '.grid-sizer';
   $options['isotope_gutter_sizer'] = '.gutter-sizer';

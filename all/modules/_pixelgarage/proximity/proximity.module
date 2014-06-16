@@ -1,0 +1,52 @@
+<?php
+/**
+ * @file
+ * Provides a views style plugin creating regularly or irregularly distributed items animating on mouse approach.
+ */
+
+/**
+ * Implements hook_views_api().
+ */
+function proximity_views_api() {
+  return array('api' => 3);
+}
+
+/**
+ * Pre-process function for theme hook views_view_proximity (implemented as views_view_proximity.tpl.php).
+ * This function prepares all necessary variables to create the markup for the proximity layout.
+ */
+function template_preprocess_views_view_proximity(&$vars) {
+  // Run preprocess function for unformatted style
+  template_preprocess_views_view_unformatted($vars);
+
+  // get saved view options
+  $view = $vars['view'];
+  $options = $vars['options'];
+
+  // add additional proximity options for use in javascript
+  $container = '.view-' . drupal_clean_css_identifier($view->name) . '.view-display-id-' . $view->current_display . ' .pe-container';
+  $desc_selector = !empty($options['proximity_desc_selector']) ? '.pe-item ' . $options['proximity_desc_selector'] : '';
+
+  // Setup proximity settings for specific container
+  $js_settings = array(
+    'proximity' => array(
+      $container => array(
+        'trans_duration' => $options['proximity_trans_duration'],
+        'start_scale' => $options['proximity_start_scale'],
+        'end_scale' => $options['proximity_end_scale'],
+        'start_opacity' => $options['proximity_start_opacity'],
+        'end_opacity' => $options['proximity_end_opacity'],
+        'extent' => $options['proximity_extent'],
+        'item_selector' => '.pe-item ' . $options['proximity_item_selector'],
+        'desc_selector' => $desc_selector,
+      ),
+    ),
+  );
+
+  // Apply the needed files and js settings
+  $path = drupal_get_path('module', 'proximity');
+  drupal_add_js($js_settings, 'setting');
+  drupal_add_js($path . '/js/jquery.proximity.js');
+  drupal_add_js($path . '/js/proximity.js');
+  drupal_add_css($path . '/css/proximity.css');
+}
