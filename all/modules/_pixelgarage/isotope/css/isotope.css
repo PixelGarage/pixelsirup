@@ -54,13 +54,6 @@
     opacity: 0.2;
 }
 
-.isotope .isotope-item.w2 {
-    width: 49%;
-}
-.isotope .isotope-item.w3 {
-    width: 11.5%;
-}
-
 /*
  *  Define uncover animation of the isotope items (when scrolled into viewport)
  */
