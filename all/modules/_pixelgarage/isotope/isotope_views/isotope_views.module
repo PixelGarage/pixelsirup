@@ -195,17 +195,19 @@ function _create_random_width_height_class ($item_sizing_key) {
   // create the sizing classes randomly
   switch ($item_sizing_key) {
     case 'w1xh2':
-      return ' w1 h' . rand(1, 2);
+      return ' w1 h' . intval(mt_rand(101, 299) / 100);
     case 'w2xh1':
-      return ' w' . rand(1, 2) . ' h1';
+      return ' w' . intval(mt_rand(101, 299) / 100) . ' h1';
     case 'w2xh2':
-      return ' w' . rand(1, 2) . ' h' . rand(1, 2);
+      return ' w' . intval(mt_rand(101, 299) / 100) . ' h' . intval(mt_rand(101, 299) / 100);
     case 'w2xh3':
-      return ' w' . rand(1, 2) . ' h' . rand(1, 3);
+      return ' w' . intval(mt_rand(101, 299) / 100) . ' h' . intval(mt_rand(101, 399) / 100);
     case 'w3xh2':
-      return ' w' . rand(1, 3) . ' h' . rand(1, 2);
+      return ' w' . intval(mt_rand(101, 399) / 100) . ' h' . intval(mt_rand(101, 299) / 100);
     case 'w3xh3':
-      return ' w' . rand(1, 3) . ' h' . rand(1, 3);
+      return ' w' . intval(mt_rand(101, 399) / 100) . ' h' . intval(mt_rand(101, 399) / 100);
+    case 'w4xh6':
+      return ' w' . intval(mt_rand(101, 499) / 100) . ' h' . intval(mt_rand(101, 699) / 100);
   }
 
 }

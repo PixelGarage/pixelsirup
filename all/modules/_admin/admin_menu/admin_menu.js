@@ -220,7 +220,7 @@ Drupal.admin.behaviors.destination = function (context, settings, $adminMenu) {
  */
 Drupal.admin.behaviors.hover = function (context, settings, $adminMenu) {
   // Hover emulation for IE 6.
-  if ($.browser.msie && parseInt(jQuery.browser.version) == 6) {
+  if (typeof($.browser) != undefined && $.browser.msie && parseInt(jQuery.browser.version) == 6) {
     $('li', $adminMenu).hover(
       function () {
         $(this).addClass('iehover');

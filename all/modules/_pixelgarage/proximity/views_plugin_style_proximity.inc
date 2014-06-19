@@ -51,13 +51,24 @@ class views_plugin_style_proximity extends views_plugin_style {
     );
 
     // define proximity effect
-    $form['proximity_trans_duration'] = array(
+    $form['proximity_item_selector'] = array(
       '#type' => 'textfield',
-      '#title' => t('Transition duration'),
-      '#description' => t('Duration in milliseconds of the transition when items change position or appearance.'),
-      '#default_value' => $default_values['proximity_trans_duration'],
-      '#size' => 10,
-      '#maxlength' => 5,
+      '#title' => t('Item selector'),
+      '#description' => t('Define the field selector (css class) of the field to be animated when approached. Leave empty to animate the row as a whole (default).'),
+      '#default_value' => $default_values['proximity_item_selector'],
+      '#size' => 128,
+      '#maxlength' => 60,
+      '#weight' => 1,
+      '#fieldset' => 'proximity',
+    );
+    $form['proximity_desc_selector'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Description selector'),
+      '#description' => t('Define the field selector (css class) of the description field to be shown when approached. Leave empty to suppress a description.'),
+      '#default_value' => $default_values['proximity_desc_selector'],
+      '#size' => 128,
+      '#maxlength' => 60,
+      '#weight' => 2,
       '#fieldset' => 'proximity',
     );
     $form['proximity_start_scale'] = array (
@@ -105,22 +116,14 @@ class views_plugin_style_proximity extends views_plugin_style {
       '#weight' => 7,
       '#fieldset' => 'proximity',
     );
-    $form['proximity_item_selector'] = array(
+    $form['proximity_trans_duration'] = array(
       '#type' => 'textfield',
-      '#title' => t('Item selector'),
-      '#description' => t('Define the field selector (css class) of the field to be animated when approached. Leave empty to animate the row fields as a whole (default).'),
-      '#default_value' => $default_values['proximity_item_selector'],
-      '#size' => 20,
-      '#maxlength' => 20,
-      '#fieldset' => 'proximity',
-    );
-    $form['proximity_desc_selector'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Description selector'),
-      '#description' => t('Define the field selector (css class) of the description field to be shown when approached. Leave empty to suppress a description.'),
-      '#default_value' => $default_values['proximity_desc_selector'],
+      '#title' => t('Transition duration'),
+      '#description' => t('Duration in milliseconds of the transition when items change position or appearance.'),
+      '#default_value' => $default_values['proximity_trans_duration'],
       '#size' => 10,
       '#maxlength' => 5,
+      '#weight' => 8,
       '#fieldset' => 'proximity',
     );
 

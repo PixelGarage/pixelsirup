@@ -143,7 +143,7 @@ function isotope_add_layout_options_to_form(&$form, $default_values) {
   $form['isotope_item_sizing'] = array(
     '#type' => 'select',
     '#title' => t('Add item size classes'),
-    '#description' => t("Select between manual and random item size class generation. Choose how many different sizes in width and height are available [w2 = two different item width classes, h3 = three different item height classes]."),
+    '#description' => t("Select between manual and random item size class generation. Choose how many different sizes in width and height are available [Example: w2 => classes w1,w2 available, h3 => classes h1,h2,h3 available]."),
     '#default_value' => $default_values['isotope_item_sizing'],
     '#options' => array(
       'manual' => t('Add manually'),
@@ -153,6 +153,7 @@ function isotope_add_layout_options_to_form(&$form, $default_values) {
       'w3xh2' => t('Random w3 - h2'),
       'w2xh3' => t('Random w2 - h3'),
       'w3xh3' => t('Random w3 - h3'),
+      'w4xh6' => t('Random w4 - h6'),
     ),
     '#required' => FALSE,
   );
