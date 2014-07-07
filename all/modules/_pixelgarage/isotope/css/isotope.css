@@ -41,9 +41,10 @@
 .isotope .isotope-item {
     display: block;
     margin-bottom: 0.4em;
-    opacity: 0.0;
+    opacity: 0.1;
     -webkit-transition: opacity 1.6s;
     -moz-transition: opacity 1.6s;
+    -ms-transition: opacity 1.6s;
     transition: opacity 1.6s
 }
 .isotope .isotope-item.shown {

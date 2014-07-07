@@ -385,7 +385,7 @@
                         // auto trigger enabled, bind scroll event
                         $(window).off('.iscroll').on('scroll.iscroll', function() {
                             var _containerBottomLine = $container.offset().top + $container.height() - iScrollSettings.padding,
-                                _documentBottomLine = $(window).height() + window.scrollY;
+                                _documentBottomLine = $(window).height() + window.pageYOffset;
                             // trigger page loading
                             if (!_loading && (_containerBottomLine < _documentBottomLine)) {
                                 _load();
@@ -433,8 +433,8 @@
                 var elemH = elem.height(),
                     elemTop = elem.offset().top,
                     elemBottom = elemTop + elemH,
-                    viewedH = $(window).height() + window.scrollY,
-                    inViewport = ( (elemTop + elemH * threshold) <= viewedH ) && ( (elemBottom - elemH * threshold) >= window.scrollY );
+                    viewedH = $(window).height() + window.pageYOffset,
+                    inViewport = ( (elemTop + elemH * threshold) <= viewedH ) && ( (elemBottom - elemH * threshold) >= window.pageYOffset );
                 return inViewport;
             },
             _uncoverItemsAnimated = function () {
@@ -446,7 +446,7 @@
                 $items.each(function () {
                     var $this = $(this);
                     if (!$this.hasClass('shown') && !$this.hasClass('animate') && _inViewport($this)) {
-                        var perspY = $(window).height() / 2 + window.scrollY;
+                        var perspY = $(window).height() / 2 + window.pageYOffset;
                         $this.css({
                             perspectiveOrigin: '20% ' + perspY + 'px'
                             /*animationDuration: '0.6s'   */
@@ -509,7 +509,7 @@
             transform: 'scale(1.0)'
         };
         $options.hiddenStyle   = {
-            opacity: 0,
+            opacity: 0.1,
             transform: 'scale(0.001)'
         };
 
