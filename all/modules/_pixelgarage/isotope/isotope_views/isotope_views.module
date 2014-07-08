@@ -76,7 +76,7 @@ function template_preprocess_views_view_isotope(&$vars) {
       foreach ($sort_values as $val) {
         $sort_crit = 'sort-criteria-' . $i;
         $val = trim($val);
-        $val = ($val != '') ? $val : '{undef}';
+        $val = ($val != '') ? $val : '«undef»';
         // custom attributes has to start with 'data-' in valid HTML
         $attributes .= 'data-' . $sort_crit . '="' . trim($val) . '" ';
         $i++;
@@ -111,7 +111,7 @@ function template_preprocess_views_view_isotope(&$vars) {
       // create the attribute list
       $sparse_attr = '';
       foreach ($sort_criteria as $val => $sort_crit) {
-        $val = ($sort_value === $val) ? $val : '{undef}';
+        $val = ($sort_value === $val) ? $val : '«undef»';
         $sparse_attr .= 'data-' . $sort_crit . '="' . $val . '"';
 
         if ($id == 0) {
