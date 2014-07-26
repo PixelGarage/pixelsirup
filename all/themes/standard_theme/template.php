@@ -28,11 +28,23 @@
 function standard_theme_preprocess_html(&$vars) {
   global $theme_key;
 
-  // make sure jQuery UI is loaded for anonymous users
+  // add font awesome bootstrap
+  drupal_add_html_head_link(array('href' => '//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css', 'rel' => 'stylesheet'));
+
+  // make sure jQuery UI and effects is loaded for anonymous users
   drupal_add_library('system', 'ui');
-  
+  drupal_add_library('system', 'effects');
+
   // Browser/platform sniff - adds body classes such as ipad, webkit, chrome etc.
   $vars['classes_array'][] = css_browser_selector();
+
+  // IE9 and greater gradient support
+  $vars['polyfills']['gte IE 9'] = array(
+    '#type' => 'markup',
+    '#markup' => "<style type='text/css'> .gradient {filter: none;} </style>",
+    '#prefix' => "<!--[if gte IE 9]>\n",
+    '#suffix' => "\n<![endif]-->\n"
+  );
 
 }
 // */

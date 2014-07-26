@@ -287,7 +287,7 @@
                             var attributes = '';
                             for (var i = 0; i < groupSortBy.length; i++) {
                                 var attr = settings.sort_data[groupSortBy[i]];
-                                attr = attr.replace(']', '*="undef"]')
+                                attr = attr.replace(']', '*="{undef}"]')
                                 attributes += (i == 0) ? attr : ', ' + attr;
 
                             }
