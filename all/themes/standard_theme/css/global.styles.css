@@ -763,7 +763,6 @@ a.button {
 /* =============================================================================
  *   Forms
  * ========================================================================== */
-
 /*
  * Wrapper for a form element (or group of form elements) and its label
  */
@@ -773,39 +772,91 @@ a.button {
     border: 1px solid #b51a00;
 }
 
+#content form {
+    overflow: hidden;  /* Prevents floating form buttons to be outside of form */
+    border-top: 1px solid #5c5c5c;
+}
+
+.form-item div.description {
+    padding: 0.2em 0;
+}
+
 .form-item label {
-    color: #222222;
+    display: inline-block;
+    font-size: 0.8em;
+    font-weight: normal;
+    line-height: 1.2;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #5c5c5c;
+}
+.form-item label span.form-required {
+    color: rgb(231,176,64);
+}
+
+.form-item .form-checkboxes label,
+.form-item .form-checkboxes input,
+.form-item .form-radios label,
+.form-item .form-radios input {
+    width: auto;
+    padding-left: 0.1em;
+}
+.form-item .form-checkboxes input,
+.form-item .form-radios input {
+    vertical-align: text-top;
+}
+
+.form-item .form-checkboxes,
+.form-item .form-radios {
+    display: block;
+    width: 100%;
+}
+.form-item .form-checkboxes .form-item.form-type-checkbox,
+.form-item .form-radios .form-item.form-type-radio {
+    display: inline-block;
 }
 
 .form-item input,
 .form-item textarea {
+    display: inline-block;
+    box-sizing: border-box;
+    width: 100%;
     outline: none;
-    border: 1px solid #222222;
-    -moz-border-radius: 0.25em; /* Firefox */
-    -webkit-border-radius: 0.25em; /* Safari and Chrome */
-    border-radius: 0.25em; /* Opera 10.5+, future browsers, and now also Internet Explorer 6+ using IE-CSS3 */
+    color: rgb(231,176,64);
+    border: 1px solid #fff;
+    -moz-border-radius: 0; /* Firefox */
+    -webkit-border-radius: 0; /* Safari and Chrome */
+    border-radius: 0; /* Opera 10.5+, future browsers, and now also Internet Explorer 6+ using IE-CSS3 */
+    background-color: rgba(248,248,248,1.0);
 }
 
 .form-item input:focus,
 .form-item textarea:focus {
-    box-shadow: 0 0 0.25em #222222;
+    box-shadow: 0 0 0.2em rgb(231,176,64) inset;
     outline: none;
 }
-
-#content form {
-    overflow: hidden;  /* Prevents floating form buttons to be outside of form */
+input[type="file"],
+input[type="submit"] {
+    width:auto;
+    padding: 0.375em 0.625em;
+    font-size: 0.8em;
+    line-height: 1;
+    text-transform: uppercase;
+    color: #5c5c5c;
+    border: 1px solid #e6e6e6;
+    -moz-border-radius: 0; /* Firefox */
+    -webkit-border-radius: 0; /* Safari and Chrome */
+    border-radius: 0; /* Opera 10.5+, future browsers, and now also Internet Explorer 6+ using IE-CSS3 */
+    background-color: rgba(233,233,233,1.0);
 }
-
 input[type="submit"] {
     display: block;
-    float: left;
-    padding: 0.375em 0.625em;
-    color: #222;
-    border: 1px solid rgba(196,196,196,1.0);
-    -moz-border-radius: 0.25em; /* Firefox */
-    -webkit-border-radius: 0.25em; /* Safari and Chrome */
-    border-radius: 0.25em; /* Opera 10.5+, future browsers, and now also Internet Explorer 6+ using IE-CSS3 */
-    background-color: rgba(188,217,194,1.0);
+    float: right;
+    font-size: 1em;
+}
+input[type="submit"]:hover {
+    color: rgb(231,176,64);
+    background: none;
 }
 
 /*
@@ -813,24 +864,27 @@ input[type="submit"] {
  */
 form fieldset {
     position:relative;
-    margin: 1em 0.125em;
-    padding-top: 3em;
-    background-color: rgba(188,217,194,1.0);
+    margin: 1em 0;
+    padding: 3em 0 0;
+    background: none;
     border: none;
 }
 form fieldset legend {
     /* position legend inside fieldset */
     position:absolute;
     top:10px;
-    left:10px;
-    color: #222;
-    font-size: 1.2em;
+    left: 0;
+    font-size: 1em;
     font-weight: bolder;
+    line-height: 1;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #5c5c5c;
+
 }​
  form fieldset span.button-operator {
      display: none;
  }
-
 
 /* =============================================================================
  *   Comment Styling - Comments, comment wrapper, comment form

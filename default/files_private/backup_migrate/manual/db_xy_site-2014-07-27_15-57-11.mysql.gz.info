@@ -1,6 +1,6 @@
-filename = "db_xy_site-2014-07-26_19-43-32"
+filename = "db_xy_site-2014-07-27_15-57-11"
 description = ""
-datestamp = "1406396613"
+datestamp = "1406469432"
 generator = "Backup and Migrate (http://drupal.org/project/backup_migrate)"
 generatorversion = "7.x-2.x"
 sites[0][version] = "7.30"
