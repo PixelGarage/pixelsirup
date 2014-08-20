@@ -1,0 +1,455 @@
+<?php
+/**
+ * @file
+ * Implements the module basics for the Vacuspeed Layout-Tool.
+ *
+ * Created by PhpStorm.
+ * User: ralph
+ * Date: 28.07.14
+ * Time: 13:50
+ */
+
+/**
+ * Session wide data container.
+ *
+ * @return array Returns the session data array.
+ */
+function &vacuspeed_tool_session_data() {
+  if (!isset($_SESSION['vacuspeed_tool'])) {
+    $_SESSION['vacuspeed_tool'] = array();
+  }
+  return $_SESSION['vacuspeed_tool'];
+}
+
+
+/**
+ * Implements hook_menu().
+ * @return array
+ */
+function vacuspeed_tool_menu() {
+  $items = array();
+  $items['layout/init'] = array(
+    'title' => 'Define surface',
+    'description' => 'Form to initialize the layout tool with all needed parameters.',
+    'page callback' => 'vacuspeed_tool_init_page',
+    'access callback' => 'user_is_logged_in',
+    'file' => 'vacuspeed_tool.forms.inc',
+    'type' => MENU_CALLBACK,
+  );
+  $items['layout/tiling'] = array(
+    'title' => 'Edit surface',
+    'description' => 'Form to get all parameters for tiling.',
+    'page callback' => 'vacuspeed_tool_tiling_page',
+    'access callback' => 'user_is_logged_in',
+    'file' => 'vacuspeed_tool.forms.inc',
+    'type' => MENU_CALLBACK,
+  );
+  $items['layout/order'] = array(
+    'title' => 'Order',
+    'description' => 'Form to order the calculated vacuspeed tiles.',
+    'page callback' => 'vacuspeed_tool_order_page',
+    'access callback' => 'user_is_logged_in',
+    'file' => 'vacuspeed_tool.forms.inc',
+    'type' => MENU_CALLBACK,
+  );
+  $items['layout/order/pdf/%'] = array(
+    'title' => 'PDF order',
+    'description' => 'Created pdf with all calculated data for an offer.',
+    'page callback' => 'vacuspeed_tool_order_pdf',
+    'page arguments' => array(3),
+    'access callback' => 'user_is_logged_in',
+    'file' => 'vacuspeed_tool.forms.inc',
+    'type' => MENU_CALLBACK,
+  );
+  $items['layout/cut/delete/%/nojs'] = array(
+    'title' => 'Delete cut',
+    'description' => 'Ajax callback for cut deletion (table links).',
+    'page callback' => 'vacuspeed_tool_cut_delete_callback',
+    'page arguments' => array(3,4),
+    'access callback' => 'user_is_logged_in',
+    'file' => 'vacuspeed_tool.forms.inc',
+    'type' => MENU_CALLBACK,
+  );
+  $items['layout/cut/delete/%/ajax'] = array(
+    'delivery callback' => 'ajax_deliver',
+  ) + $items['layout/cut/delete/%/nojs'];
+  return $items;
+}
+
+/**
+ * Alters each page by adding a breadcrumb.
+ *
+ * @param $page
+ */
+function vacuspeed_tool_page_alter(&$page) {
+  // add a special breadcrumb to each page
+  $active_page = $_GET['q'];
+  if ($active_page == 'layout/init' || $active_page == 'layout/tiling' || $active_page == 'layout/order') {
+    // set breadcrumb on all pages except front page
+    drupal_set_breadcrumb(_vacuspeed_tool_create_breadcrumb($active_page));
+
+  } else {
+    // disable breadcrumb
+    drupal_set_breadcrumb(array());
+
+  }
+
+  // check jquery dialog library (not loaded in core)
+  $cdn = variable_get('jquery_update_jquery_cdn');
+  if ($active_page == 'layout/tiling' && (!isset($cdn) || $cdn == 'none')) {
+    if (!libraries_detect('ui.dialog')) {
+      drupal_add_library('system', 'ui.dialog');
+    }
+  }
+
+}
+
+
+function _vacuspeed_tool_create_breadcrumb($active_page) {
+  $crumb1 = t('1. Initialize surface...');
+  $crumb2 = t('2. Edit surface...');
+  $crumb3 = t('3. Build PDF and order');
+
+  switch ($active_page) {
+    case 'layout/init':
+      $crumb1 = l($crumb1, 'layout/init');
+      break;
+    case 'layout/tiling':
+      $crumb1 = l($crumb1, 'layout/init');
+      $crumb2 = l($crumb2, 'layout/tiling');
+      break;
+    case 'layout/order':
+      $crumb1 = l($crumb1, 'layout/init');
+      $crumb2 = l($crumb2, 'layout/tiling');
+      $crumb3 = l($crumb3, 'layout/order');
+      break;
+  }
+
+  return array( $crumb1, $crumb2, $crumb3 );
+}
+
+/**
+ * Creates a Drupal AJAX command to close the modal dialog.
+ *
+ * This method can be used in an ajax callback to close the modal dialog, when the form is validated successfully.
+ */
+function vacuspeed_tool_command_dialog_close() {
+  return array(
+    'command' => 'dialog_close',
+  );
+}
+
+
+/*-------------------------------------------------------------------------------
+ *        Vacuspeed tiles generator
+ *-------------------------------------------------------------------------------*/
+
+/**
+ * Helper function creating a unique path for the resulting items of the vacuspeed calculation.
+ *
+ * @return string Path of the resulting items
+ */
+function vacuspeed_tool_result_path () {
+  global $user;
+  $session_data = &vacuspeed_tool_session_data();
+  $path = file_build_uri("vacuspeed/" . $user->uid . "/" . $session_data['timestamp'] . "/");
+  file_prepare_directory($path, FILE_CREATE_DIRECTORY);
+  return $path;
+}
+
+
+/**
+ * Creates an image showing the the defined surface without any tiles.
+ *
+ * @param int $width  Width of surface.
+ * @param int $height Height of surface.
+ * @param array $cuts All defined cuts in form cut_i = array(top, left, bottom, right).
+ *
+ * @return string Absolute path to the created image.
+ */
+function vacuspeed_tool_create_surface_image($width, $height, $cuts = array()) {
+  // draw surface with border
+  $shift = 16;
+  $img = imagecreatetruecolor(($width+1),($height+1));
+  $border = imagecolorallocate($img, 0, 0, 0);
+  $surfaceColor = imagecolorallocate($img, 230, 230, 230);
+  $cutColor = imagecolorallocate($img, 255, 255, 255);
+  imagefilledrectangle($img, 0, 0, $width, $height, $surfaceColor);
+  imagerectangle($img, 0, 0, $width, $height, $border);
+
+  // draw cuts with border
+  foreach ($cuts as $i => $cut) {
+    $top = $cut['top'];
+    $left = $cut['left'];
+    $bottom = $top + $cut['height'];
+    $right = $left + $cut['width'];
+    imagefilledrectangle($img, $left, $top, $right, $bottom, $cutColor);
+    switch($cut['type']) {
+      case 'TL':
+        imageline ($img, $right, $top, $right, $bottom, $border); // right edge
+        imageline ($img, $left, $bottom, $right, $bottom, $border); // bottom edge
+        break;
+      case 'TM':
+        imageline ($img, $left, $top, $left, $bottom, $border); // left edge
+        imageline ($img, $right, $top, $right, $bottom, $border); // right edge
+        imageline ($img, $left, $bottom, $right, $bottom, $border); // bottom edge
+        break;
+      case 'TR':
+        imageline ($img, $left, $top, $left, $bottom, $border); // left edge
+        imageline ($img, $left, $bottom, $right, $bottom, $border); // bottom edge
+        break;
+      case 'ML':
+        imageline ($img, $left, $top, $right, $top, $border); // top edge
+        imageline ($img, $right, $top, $right, $bottom, $border); // right edge
+        imageline ($img, $left, $bottom, $right, $bottom, $border); // bottom edge
+        break;
+      case 'MM':
+        imagerectangle($img, $left, $top, $right, $bottom, $border);
+        break;
+      case 'MR':
+        imageline ($img, $left, $top, $right, $top, $border); // top edge
+        imageline ($img, $left, $top, $left, $bottom, $border); // left edge
+        imageline ($img, $left, $bottom, $right, $bottom, $border); // bottom edge
+        break;
+      case 'BL':
+        imageline ($img, $right, $top, $right, $bottom, $border); // right edge
+        imageline ($img, $left, $top, $right, $top, $border); // top edge
+        break;
+      case 'BM':
+        imageline ($img, $left, $top, $left, $bottom, $border); // left edge
+        imageline ($img, $right, $top, $right, $bottom, $border); // right edge
+        imageline ($img, $left, $top, $right, $top, $border); // top edge
+        break;
+      case 'BR':
+        imageline ($img, $left, $top, $left, $bottom, $border); // left edge
+        imageline ($img, $left, $top, $right, $top, $border); // top edge
+        break;
+    }
+
+    // draw cut index
+    imagestring ($img, 5, ($left+$right)/2-5, ($top+$bottom)/2-5, $i, $border);
+  }
+
+  // draw dimensions
+  imagestring ($img, 5, 2*$shift, $shift, t("Width = @l", array('@l' => $width)), $border);
+  imagestringup ($img, 5, $width-2*$shift, $height-2*$shift, t("Height = @h", array('@h' => $height)), $border);
+
+  // write image
+  $imgFile = vacuspeed_tool_result_path() . "/img_surface.jpg";
+  imagejpeg($img, $imgFile);
+  imagedestroy($img);
+
+  // return image path with random parameter to prevent loading cached images
+  return file_create_url($imgFile) . '?random=' . date("U");
+}
+
+/**
+ * Calculates the tiles for a given surface with dimension ($width, $height) and a number of cuts.
+ * If flag $show_double_layer is TRUE, a second layer with a shifted layout is calculated.
+ *
+ * @param int $width  Width of surface to be tiled.
+ * @param int $height Height of surface to be tiled.
+ * @param array $cuts All defined cuts in an associative array.
+ * @param bool $show_double_layer True shows both calculated layers of the surface, false only first.
+ *
+ * @return array Array of path to tiled layer images. The path contains a random parameter to prevent loading of cached images via ajax.
+ */
+function vacuspeed_tool_calculate_tiled_surface($width, $height, $cuts = array(), $show_double_layer = false) {
+  $tiledImages = array();
+
+  // create input for the tiles generator
+  //
+  // result file
+  $result = vacuspeed_tool_result_path() . "/tiling_result.txt";
+
+  // create cuts input for generator (-g left1, top1, right1, bottom1, ...)
+  $cuts_str = '';
+  foreach ($cuts as $i => $cut) {
+    if ($i > 0) {
+      $cuts_str .= ",";
+    }
+    $right = $cut['left'] + $cut['width'];
+    $bottom = $cut['top'] + $cut['height'];
+    $cuts_str .= $cut['left'] . ',' . $cut['top'] . ',' . $right . ',' . $bottom;
+  }
+  if (strlen($cuts_str) > 0) {
+    $cuts_str = '-g ' . $cuts_str;
+  }
+
+  //
+  // calculate the tiles for the defined surface and cuts
+  $generator = 'python ' . drupal_get_path('module', 'vacuspeed_tool') . '/python/wall.py';
+  $command = $generator . " -w " . $width . "," . $height . " -m HA,QU " . $cuts_str . " -f " . $result . " -d no";
+  $data = shell_exec($command);
+  if (strpos($data, 'SUCCESS') === 0) {
+    // write data to file (backup)
+    if ($hFile = fopen($result, 'w')) {
+      fwrite($hFile, $data);
+      fclose($hFile);
+    }
+
+  } else {
+    watchdog ('Python script', 'The tiles calculation failed: ' . $data, array());
+    return $tiledImages;
+
+  }
+
+  // parse the layers in the result file (always both layers contained)
+  if($data) {
+    $layers = explode('LAYER', $data, 10);
+    foreach ($layers as $index => $layer) {
+      if ($index == 0) continue;  // skip header part
+      $tiles = _vacuspeed_tool_parse_layer($layer, $index);
+      $tiledImages[] = _vacuspeed_tool_create_tiled_layer_image($index, $width, $height, $cuts, $tiles);
+      if (!$show_double_layer) break;
+    }
+
+  } else {
+    drupal_set_message(t('The created tiling file could not be read.'), 'error');
+
+  }
+
+  return $tiledImages;
+}
+
+/**
+ * Helper function parsing a layer for the created tiles and counts.
+ *
+ * @param string $layer String containing the counts and tiles of the layer.
+ * @param int $index  The index of the layer.
+ * @return array  Array containing all calculated tiles of the layer.
+ */
+function _vacuspeed_tool_parse_layer($layer, $index) {
+  // clean layer
+  $layer = str_replace("\r", "\n", $layer);
+  $layer = str_replace(array("\n\n","\n\n\n","\n\n\n\n"), "\n", $layer);
+
+  // get the tiles coordinates
+  $slices = explode('COORDS: ', $layer);
+  $lines = explode("\n", $slices[1]);
+
+  // get tile counts
+  $str_counts = explode('marginal', $slices[0])[1];
+  $str_counts = explode(' ', $str_counts);
+
+  $session_data = &vacuspeed_tool_session_data();
+  $key  = 'Layer-' . $index;
+  $session_data['counts'][$key] = array (
+    'total'  => (int)$str_counts[0],
+    '100x50' => (int)$str_counts[1],
+    '50x50'  => (int)$str_counts[2],
+    '50x25'  => (int)$str_counts[3],
+    '25x25'  => (int)$str_counts[4],
+    'CUT'      => (int)$str_counts[5],
+  );
+
+  // calculate total of tiles over all layers
+  if ($index == 1) {
+    // initialize totals
+    $session_data['counts']['totals']['100x50'] = $session_data['counts'][$key]['100x50'];
+    $session_data['counts']['totals']['50x50'] = $session_data['counts'][$key]['50x50'];
+    $session_data['counts']['totals']['50x25'] = $session_data['counts'][$key]['50x25'];
+    $session_data['counts']['totals']['25x25'] = $session_data['counts'][$key]['25x25'];
+    $session_data['counts']['totals']['CUT'] = $session_data['counts'][$key]['CUT'];
+    $session_data['counts']['totals']['total'] = $session_data['counts'][$key]['total'];
+
+  } else {
+    // calculate totals of tile types
+    $session_data['counts']['totals']['100x50'] += $session_data['counts'][$key]['100x50'];
+    $session_data['counts']['totals']['50x50'] += $session_data['counts'][$key]['50x50'];
+    $session_data['counts']['totals']['50x25'] += $session_data['counts'][$key]['50x25'];
+    $session_data['counts']['totals']['25x25'] += $session_data['counts'][$key]['25x25'];
+    $session_data['counts']['totals']['CUT'] += $session_data['counts'][$key]['CUT'];
+    $session_data['counts']['totals']['total'] += $session_data['counts'][$key]['total'];
+  }
+
+  // get tiles
+  $tiles = array();
+  foreach ($lines as $i => $line) {
+    // skip coordinates header
+    if ($i == 0 || $line == '') continue;
+
+    // create tiles array
+    $tile = explode(' ', $line);
+    $tiles[] = array(
+      'type' => $tile[0],
+      'x0' => (int)$tile[1],
+      'y0' => (int)$tile[2],
+      'x1' => (int)$tile[3],
+      'y1' => (int)$tile[4],
+    );
+  }
+
+  return $tiles;
+}
+
+/**
+ * Helper function creating an image from the parsed layer showing all tiles and defined cuts.
+ *
+ * @param int $index  Index of the layer to be displayed
+ * @param int $width  Total width of the surface to be tiled
+ * @param int $height Total height of the surface to be tiled
+ * @param array $cuts Array of all defined cuts
+ * @param array $tiles  All parsed tiles of the layer.
+ *
+ * @return The absolute path of the created image.
+ */
+function _vacuspeed_tool_create_tiled_layer_image($index, $width, $height, $cuts, $tiles) {
+  $shift = 16;
+  $img = imagecreatetruecolor(($width+1),($height+1));
+  $border = imagecolorallocate($img, 0, 0, 0);
+  $cutColor = imagecolorallocate($img, 255, 255, 255);
+
+  // draw image with text
+  imagefilledrectangle($img, 0, 0, $width, $height, $cutColor);
+
+  foreach ($tiles as $i => $tile) {
+    switch ($tile['type']) {
+      case '100x50':
+        $tileColor = imagecolorallocate($img, 240, 244, 255);
+        break;
+      case '50x50':
+        $tileColor = imagecolorallocate($img, 197, 213, 254);
+        break;
+      case '25x50':
+      case '50x25':
+        $tileColor = imagecolorallocate($img, 140, 171, 253);
+        break;
+      case '25x25':
+        $tileColor = imagecolorallocate($img, 37, 97, 252);
+        break;
+      default:
+        // tile is CUT format
+        $tileColor = imagecolorallocate($img, 155, 155, 155);
+    }
+
+    // draw tile with border
+    imagefilledrectangle($img, $tile['x0'], $tile['y0'], $tile['x1'], $tile['y1'], $tileColor);
+    imagerectangle($img, $tile['x0'], $tile['y0'], $tile['x1'], $tile['y1'], $border);
+
+  }
+
+  // draw cuts index
+  foreach ($cuts as $i => $cut) {
+    $top = $cut['top'];
+    $left = $cut['left'];
+    $bottom = $top + $cut['height'];
+    $right = $left + $cut['width'];
+    imagefilledrectangle($img, $left, $top, $right, $bottom, $cutColor);
+    // draw cut index
+    imagestring ($img, 5, ($left+$right)/2-5, ($top+$bottom)/2-5, $i, $border);
+  }
+
+  // draw dimensions
+  imagestring ($img, 5, 2*$shift, $shift, t("Width = @l", array('@l' => $width)), $border);
+  imagestringup ($img, 5, $width-2*$shift, $height-2*$shift, t("Height = @h", array('@h' => $height)), $border);
+
+  // write image and return absolute path
+  $imgFile = vacuspeed_tool_result_path() . "/img_layer_" . $index . ".jpg";
+  imagejpeg($img, $imgFile);
+  imagedestroy($img);
+
+  // return image path with random parameter to prevent loading cached images
+  return file_create_url($imgFile) . '?random=' . date("U");
+}
+

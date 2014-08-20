@@ -1,0 +1,113 @@
+<?php
+/**
+ * @file
+ * Provides a PDF document class based on the famous TCPDF library that simplifies PDF document generation dramatically.
+ */
+
+/**
+ * Implements hook_libraries_info().
+ */
+function tcpdf_document_libraries_info() {
+  $libraries['tcpdf'] = array(
+    'name' => 'TCPHP based PDF document creation',
+    'vendor url' => 'http://www.tcpdf.org/',
+    'download url' => 'http://sourceforge.net/projects/tcpdf/files/',
+    'version arguments' => array(
+       'file' => 'CHANGELOG.TXT',
+       // 6.0.091 (2014-08-13)
+       'pattern' => '([0-9\.]+)',
+       'lines' => 2,
+       'cols' => 20,
+    ),
+    'files' => array(
+       'php' => array(
+         'tcpdf.php',
+       ),
+    ),
+  );
+
+  return $libraries;
+}
+
+/**
+ * Check if the TCPDF library is installed.
+ *
+ * @return boolean A flag indicating the installed status.
+ */
+function tcpdf_document_tcpdf_installed() {
+  if (($library = libraries_detect('tcpdf')) && !empty($library['installed'])) {
+    return TRUE;
+  }
+  else {
+    return FALSE;
+  }
+}
+
+/**
+ * Check if the TCPDF library has been loaded.
+ *
+ * @return boolean A flag indicating the loaded status.
+ */
+function tcpdf_document_tcpdf_loaded() {
+  //
+  //  TCPDF library definition and checking functions
+  //
+  if (!defined('K_TCPDF_EXTERNAL_CONFIG')) {
+    define('K_TCPDF_EXTERNAL_CONFIG', TRUE);
+  }
+
+  // load external TCPDF configuration
+  require_once(dirname(__FILE__).'/tcpdf_document.config.inc');
+
+  // load TCPDF library
+  if (($library = libraries_load('tcpdf')) && !empty($library['loaded'])) {
+    return TRUE;
+  }
+  else {
+    return FALSE;
+  }
+}
+
+/**
+ * Ensures that the TCPDF library is loaded, otherwise exits with an error message.
+ *
+ * If the tcpdf library could be loaded, an instance of a PDFDocument class is created, initialized and returned.
+ * The returned PDFDocument instance can be edited with the all available TCPDF class methods and additional
+ * methods defined in the class PDFDocument (see class description).
+ *
+ * @param array $options
+ *   Associative array containing basic settings. All values have a default.
+ *     'title' => Title of the document
+ *     'subject' => Subject of the document
+ *     'author' => Author of the document
+ *     'keywords' => Comma separated list of keywords
+ *     'header' => Array
+ *        'html' => Html code of the header.
+ *        'callback' => Document method that generates the header. If 'html' is set, it's ignored.
+ *        'textcolor' => Array with rgb-values for header text color, default = array(0,0,0)
+ *        'linecolor' => Array with rgb-values for header line color, default = array(0,0,0)
+ *     'footer' => Array
+ *        'html' => Html code of the footer.
+ *        'callback' => Document method that generates the footer. If 'html' is set, it's ignored.
+ *        'textcolor' => Array with rgb-values for header text color, default = array(0,0,0)
+ *        'linecolor' => Array with rgb-values for header line color, default = array(0,0,0)
+ *
+ * @return obj The created and initialized pdf document.
+ */
+function tcpdf_document_instance($options = array()) {
+  // check tcpdf library
+  if (!tcpdf_document_tcpdf_loaded()) {
+    drupal_set_message('The TCPDF library could not be loaded', 'error');
+    return;
+  } else {
+    // load PDFDocument class
+    require_once(dirname(__FILE__).'/tcpdf_document.class.inc');
+  }
+
+  // create pdf document
+  $pdf = new PDFDocument();
+  $pdf->InitializeDocument($options);
+
+  return $pdf;
+}
+

@@ -1,0 +1,65 @@
+/*
+ * Table css for tcpdf documents.
+ */
+table {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    font-size: 1em;
+    vertical-align: middle;
+}
+table,
+thead,
+tbody,
+tr,
+th,
+td {
+    border-color: #ccc;
+}
+tbody {
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+table td.caption {
+    padding: 0.2em 0.5em;
+    color: #fff;
+    background-color: #a70014;
+}
+
+tr > th {
+    font-weight: 400;
+    color: #fff;
+    background-color: #888;
+}
+
+tr > td {
+    border-top: 1px solid #ccc;
+}
+
+tr.odd {
+    background: #fff;
+}
+
+tr.info,
+tr.even,
+tr:nth-child(2n+2) {
+    background-color: #f5f5f5;
+}
+
+tr:last-child {
+    border-bottom: 1px solid #ccc;
+}
+
+td,th {
+    margin: 0;
+    padding: 0.2em 0.5em;
+    text-align: left;
+    vertical-align: middle;
+    border-left: 1px solid #ccc;
+}
+
+td:last-child, th:last-child {
+    border-right: 1px solid #ccc;
+}
+

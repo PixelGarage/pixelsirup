@@ -1,0 +1,72 @@
+/*
+ * Form css for tcpdf documents.
+ */
+
+form {
+    overflow: hidden;
+}
+
+form .form-region h6 {
+    padding: 4pt 8pt;
+    font-size: 1em;
+    color: #fff;
+    background-color: #a70014;
+}
+form .form-region .region-inner {
+    margin: 10pt;
+    font-size: 1em;
+}
+
+form .form-item div.description {
+    padding: 0.2em 0;
+}
+
+form .form-item label {
+    display: inline-block;
+    font-size: 1em;
+    font-weight: 500;
+    line-height: 1.2;
+    color: #444;
+}
+form .form-item label span.form-required {
+    color: #a70014;
+}
+
+form .form-item .form-type-radios {
+    margin: 3em 0 0;
+}
+form .form-item .form-checkbox,
+form .form-item .form-radio {
+    display: inline;
+    width: auto;
+    font-weight: bold;
+    color: #008;
+}
+form .form-item .form-checkboxes label,
+form .form-item .form-checkboxes input,
+form .form-item .form-radios label,
+form .form-item .form-radios input {
+    width: auto;
+    padding: 0 0.5em 0 0;
+}
+form .form-item input,
+form .form-item .form-text,
+form .form-item .form-textarea {
+    display: inline;
+    box-sizing: border-box;
+    outline: none;
+    color: #008;
+    background-color: #f8f8f8;
+}
+
+form .form-item .form-item-vacuspeed-install-type > label,
+form .form-item .form-item-vacuspeed-delivery-time > label {
+    font-weight: bold;
+}
+form .form-item .form-item-vacuspeed-transport-type label,
+form .form-item .form-item-vacuspeed-unloading-type label,
+form .form-item .form-item-vacuspeed-access-type label {
+    width: 100%;
+}
+
+

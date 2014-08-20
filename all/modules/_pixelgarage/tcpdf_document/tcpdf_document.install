@@ -1,0 +1,34 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the Isotope API module.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function tcpdf_document_requirements($phase) {
+  $requirements = array();
+  $t = get_t(); // no access to the full Drupal API possible during Drupal install
+
+  if ($phase == 'runtime') {
+    // only runtime check
+    $library = libraries_detect('tcpdf');
+
+    $requirements['tcpdf'] = array(
+      'title' => $t('TCPDF library version'),
+    );
+    if ($library['installed']) {
+      $requirements['tcpdf']['value'] = $library['version'];
+      $requirements['tcpdf']['severity'] = REQUIREMENT_OK;
+    }
+    else {
+      $requirements['tcpdf']['value'] = $library['error'];
+      $requirements['tcpdf']['description'] = $library['error message'];
+      $requirements['tcpdf']['severity'] = REQUIREMENT_ERROR;
+    }
+  }
+
+  return $requirements;
+}
+
