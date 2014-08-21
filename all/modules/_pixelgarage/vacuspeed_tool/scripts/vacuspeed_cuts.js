@@ -30,31 +30,31 @@
 
                         if ($this.hasClass('add-button-0')) {
                             // top left
-                            $this.css({"cursor": "pointer", "position": "absolute", "left": shift, "top": shift})
+                            $this.css({"cursor": "pointer", "position": "absolute", "left": shift, "top": shift, "width": "32px", "height": "32px"})
                         } else if ($this.hasClass('add-button-1')) {
                             // top middle
-                            $this.css({"cursor": "pointer", "position": "absolute", "left": (width/2 + shift), "top": shift})
+                            $this.css({"cursor": "pointer", "position": "absolute", "left": (width/2 + shift), "top": shift, "width": "32px", "height": "32px"})
                         } else if ($this.hasClass('add-button-2')) {
                             // top right
-                            $this.css({"cursor": "pointer", "position": "absolute", "left": (width + shift), "top": shift})
+                            $this.css({"cursor": "pointer", "position": "absolute", "left": (width + shift), "top": shift, "width": "32px", "height": "32px"})
                         } else if ($this.hasClass('add-button-3')) {
                             // middle left
-                            $this.css({"cursor": "pointer", "position": "absolute", "left": shift, "top": (height/2 + shift)})
+                            $this.css({"cursor": "pointer", "position": "absolute", "left": shift, "top": (height/2 + shift), "width": "32px", "height": "32px"})
                         } else if ($this.hasClass('add-button-4')) {
                             // middle middle
-                            $this.css({"cursor": "pointer", "position": "absolute", "left": (width/2 + shift), "top": (height/2 + shift)})
+                            $this.css({"cursor": "pointer", "position": "absolute", "left": (width/2 + shift), "top": (height/2 + shift), "width": "32px", "height": "32px"})
                         } else if ($this.hasClass('add-button-5')) {
                             // middle right
-                            $this.css({"cursor": "pointer", "position": "absolute", "left": (width + shift), "top": (height/2 + shift)})
+                            $this.css({"cursor": "pointer", "position": "absolute", "left": (width + shift), "top": (height/2 + shift), "width": "32px", "height": "32px"})
                         } else if ($this.hasClass('add-button-6')) {
                             // bottom left
-                            $this.css({"cursor": "pointer", "position": "absolute", "left": shift, "top": (height + shift)})
+                            $this.css({"cursor": "pointer", "position": "absolute", "left": shift, "top": (height + shift), "width": "32px", "height": "32px"})
                         } else if ($this.hasClass('add-button-7')) {
                             // bottom middle
-                            $this.css({"cursor": "pointer", "position": "absolute", "left": (width/2 + shift), "top": (height + shift)})
+                            $this.css({"cursor": "pointer", "position": "absolute", "left": (width/2 + shift), "top": (height + shift), "width": "32px", "height": "32px"})
                         } else if ($this.hasClass('add-button-8')) {
                             // bottom right
-                            $this.css({"cursor": "pointer", "position": "absolute", "left": (width + shift), "top": (height + shift)})
+                            $this.css({"cursor": "pointer", "position": "absolute", "left": (width + shift), "top": (height + shift), "width": "32px", "height": "32px"})
                         }
 
                     });

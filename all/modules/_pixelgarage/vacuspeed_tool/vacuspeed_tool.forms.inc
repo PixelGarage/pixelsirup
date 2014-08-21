@@ -624,7 +624,7 @@ function _vacuspeed_tool_create_add_button_markup($width, $height) {
 
   $markup = '';
   for ($i = 0; $i < 9; $i++) {
-    $markup .= '<div class="add-button add-button-' . $i . '"><img src="' . $img_src . '" height="32" width="32"/></div>';
+    $markup .= '<div class="add-button add-button-' . $i . '"><img src="' . $img_src . '" height="32px" width="32px"/></div>';
   }
   return $markup;
 }
@@ -1128,7 +1128,7 @@ function vacuspeed_tool_order_form($form, &$form_state) {
     '#size' => 20,
     '#maxlength' => 30,
   );
-  $form['vacuspeed_delivery_phone'] = array(
+  $form['vacuspeed_delivery_address'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Delivery address'),
     '#title_display' => 'before',
@@ -1262,24 +1262,24 @@ function vacuspeed_tool_order_pdf($dest) {
   $pdf->writeHTMLCell(0, 0, PDF_MARGIN_LEFT, $pdf_page_start_height, $title, 0, 1, false, true, '', true);
 
   // customer part
-  //$hidden_elems = array('vacuspeed_order_radios','vacuspeed_order_title','vacuspeed_order_company','vacuspeed_order_street','vacuspeed_order_city','vacuspeed_order_contact','vacuspeed_order_contact_email','vacuspeed_invoice_title','vacuspeed_invoice_company','vacuspeed_invoice_street','vacuspeed_invoice_city','vacuspeed_invoice_phone','vacuspeed_invoice_fax','vacuspeed_install_title','vacuspeed_install_commission_nr','vacuspeed_install_street','vacuspeed_install_id','vacuspeed_install_city','vacuspeed_install_type','vacuspeed_delivery_title','vacuspeed_delivery_date','vacuspeed_delivery_oncall','vacuspeed_delivery_avis','vacuspeed_delivery_phone','vacuspeed_delivery_time','vacuspeed_transport_type','vacuspeed_unloading_type','vacuspeed_access_type','vacuspeed_order_remark','vacuspeed_order_pdf');
+  //$hidden_elems = array('vacuspeed_order_radios','vacuspeed_order_title','vacuspeed_order_company','vacuspeed_order_street','vacuspeed_order_city','vacuspeed_order_contact','vacuspeed_order_contact_email','vacuspeed_invoice_title','vacuspeed_invoice_company','vacuspeed_invoice_street','vacuspeed_invoice_city','vacuspeed_invoice_phone','vacuspeed_invoice_fax','vacuspeed_install_title','vacuspeed_install_commission_nr','vacuspeed_install_street','vacuspeed_install_id','vacuspeed_install_city','vacuspeed_install_type','vacuspeed_delivery_title','vacuspeed_delivery_date','vacuspeed_delivery_oncall','vacuspeed_delivery_avis','vacuspeed_delivery_address','vacuspeed_delivery_time','vacuspeed_transport_type','vacuspeed_unloading_type','vacuspeed_access_type','vacuspeed_order_remark','vacuspeed_order_pdf');
   $hidden_elems = array('vacuspeed_order_radios','vacuspeed_invoice_title','vacuspeed_invoice_company','vacuspeed_invoice_street','vacuspeed_invoice_city','vacuspeed_invoice_phone','vacuspeed_invoice_fax',
                         'vacuspeed_install_title','vacuspeed_install_commission_nr','vacuspeed_install_street','vacuspeed_install_id','vacuspeed_install_city','vacuspeed_install_type',
-                        'vacuspeed_delivery_title','vacuspeed_delivery_date','vacuspeed_delivery_oncall','vacuspeed_delivery_avis','vacuspeed_delivery_phone','vacuspeed_delivery_time',
+                        'vacuspeed_delivery_title','vacuspeed_delivery_date','vacuspeed_delivery_oncall','vacuspeed_delivery_avis','vacuspeed_delivery_address','vacuspeed_delivery_time',
                         'vacuspeed_transport_type','vacuspeed_unloading_type','vacuspeed_access_type','vacuspeed_order_remark','vacuspeed_order_pdf');
   $pdf->DrupalForm($session_data['order_form'], PDF_MARGIN_LEFT, $pdf_page_start_height-5, 85, false, $hidden_elems);
 
   // invoice part
   $hidden_elems = array('vacuspeed_order_radios','vacuspeed_order_title','vacuspeed_order_company','vacuspeed_order_street','vacuspeed_order_city','vacuspeed_order_contact','vacuspeed_order_contact_email',
                         'vacuspeed_install_title','vacuspeed_install_commission_nr','vacuspeed_install_street','vacuspeed_install_id','vacuspeed_install_city','vacuspeed_install_type',
-                        'vacuspeed_delivery_title','vacuspeed_delivery_date','vacuspeed_delivery_oncall','vacuspeed_delivery_avis','vacuspeed_delivery_phone','vacuspeed_delivery_time',
+                        'vacuspeed_delivery_title','vacuspeed_delivery_date','vacuspeed_delivery_oncall','vacuspeed_delivery_avis','vacuspeed_delivery_address','vacuspeed_delivery_time',
                         'vacuspeed_transport_type','vacuspeed_unloading_type','vacuspeed_access_type','vacuspeed_order_remark','vacuspeed_order_pdf');
   $pdf->DrupalForm($session_data['order_form'], PDF_MARGIN_LEFT+95, $pdf_page_start_height-5, 85, false, $hidden_elems);
 
   // install part
   $hidden_elems = array('vacuspeed_order_radios','vacuspeed_order_title','vacuspeed_order_company','vacuspeed_order_street','vacuspeed_order_city','vacuspeed_order_contact','vacuspeed_order_contact_email',
                         'vacuspeed_invoice_title','vacuspeed_invoice_company','vacuspeed_invoice_street','vacuspeed_invoice_city','vacuspeed_invoice_phone','vacuspeed_invoice_fax',
-                        'vacuspeed_delivery_title','vacuspeed_delivery_date','vacuspeed_delivery_oncall','vacuspeed_delivery_avis','vacuspeed_delivery_phone','vacuspeed_delivery_time',
+                        'vacuspeed_delivery_title','vacuspeed_delivery_date','vacuspeed_delivery_oncall','vacuspeed_delivery_avis','vacuspeed_delivery_address','vacuspeed_delivery_time',
                         'vacuspeed_transport_type','vacuspeed_unloading_type','vacuspeed_access_type','vacuspeed_order_remark','vacuspeed_order_pdf');
   $pdf->DrupalForm($session_data['order_form'], PDF_MARGIN_LEFT, $pdf_page_start_height+45, 85, false, $hidden_elems);
 
@@ -1294,7 +1294,7 @@ function vacuspeed_tool_order_pdf($dest) {
   $hidden_elems = array('vacuspeed_order_radios','vacuspeed_order_title','vacuspeed_order_company','vacuspeed_order_street','vacuspeed_order_city','vacuspeed_order_contact','vacuspeed_order_contact_email',
                         'vacuspeed_invoice_title','vacuspeed_invoice_company','vacuspeed_invoice_street','vacuspeed_invoice_city','vacuspeed_invoice_phone','vacuspeed_invoice_fax',
                         'vacuspeed_install_title','vacuspeed_install_commission_nr','vacuspeed_install_street','vacuspeed_install_id','vacuspeed_install_city','vacuspeed_install_type',
-                        'vacuspeed_delivery_title','vacuspeed_delivery_date','vacuspeed_delivery_oncall','vacuspeed_delivery_avis','vacuspeed_delivery_phone','vacuspeed_delivery_time',
+                        'vacuspeed_delivery_title','vacuspeed_delivery_date','vacuspeed_delivery_oncall','vacuspeed_delivery_avis','vacuspeed_delivery_address','vacuspeed_delivery_time',
                         'vacuspeed_unloading_type','vacuspeed_access_type','vacuspeed_order_remark','vacuspeed_order_pdf');
   $pdf->DrupalForm($session_data['order_form'], PDF_MARGIN_LEFT, $pdf_page_start_height+140, 55, false, $hidden_elems);
 
@@ -1302,7 +1302,7 @@ function vacuspeed_tool_order_pdf($dest) {
   $hidden_elems = array('vacuspeed_order_radios','vacuspeed_order_title','vacuspeed_order_company','vacuspeed_order_street','vacuspeed_order_city','vacuspeed_order_contact','vacuspeed_order_contact_email',
                         'vacuspeed_invoice_title','vacuspeed_invoice_company','vacuspeed_invoice_street','vacuspeed_invoice_city','vacuspeed_invoice_phone','vacuspeed_invoice_fax',
                         'vacuspeed_install_title','vacuspeed_install_commission_nr','vacuspeed_install_street','vacuspeed_install_id','vacuspeed_install_city','vacuspeed_install_type',
-                        'vacuspeed_delivery_title','vacuspeed_delivery_date','vacuspeed_delivery_oncall','vacuspeed_delivery_avis','vacuspeed_delivery_phone','vacuspeed_delivery_time',
+                        'vacuspeed_delivery_title','vacuspeed_delivery_date','vacuspeed_delivery_oncall','vacuspeed_delivery_avis','vacuspeed_delivery_address','vacuspeed_delivery_time',
                         'vacuspeed_transport_type','vacuspeed_access_type','vacuspeed_order_remark','vacuspeed_order_pdf');
   $pdf->DrupalForm($session_data['order_form'], PDF_MARGIN_LEFT+60, $pdf_page_start_height+140, 57, false, $hidden_elems);
 
@@ -1310,7 +1310,7 @@ function vacuspeed_tool_order_pdf($dest) {
   $hidden_elems = array('vacuspeed_order_radios','vacuspeed_order_title','vacuspeed_order_company','vacuspeed_order_street','vacuspeed_order_city','vacuspeed_order_contact','vacuspeed_order_contact_email',
                         'vacuspeed_invoice_title','vacuspeed_invoice_company','vacuspeed_invoice_street','vacuspeed_invoice_city','vacuspeed_invoice_phone','vacuspeed_invoice_fax',
                         'vacuspeed_install_title','vacuspeed_install_commission_nr','vacuspeed_install_street','vacuspeed_install_id','vacuspeed_install_city','vacuspeed_install_type',
-                        'vacuspeed_delivery_title','vacuspeed_delivery_date','vacuspeed_delivery_oncall','vacuspeed_delivery_avis','vacuspeed_delivery_phone','vacuspeed_delivery_time',
+                        'vacuspeed_delivery_title','vacuspeed_delivery_date','vacuspeed_delivery_oncall','vacuspeed_delivery_avis','vacuspeed_delivery_address','vacuspeed_delivery_time',
                         'vacuspeed_transport_type','vacuspeed_unloading_type','vacuspeed_order_remark','vacuspeed_order_pdf');
   $pdf->DrupalForm($session_data['order_form'], PDF_MARGIN_LEFT+123, $pdf_page_start_height+140, 57, false, $hidden_elems);
 
@@ -1318,7 +1318,7 @@ function vacuspeed_tool_order_pdf($dest) {
   $hidden_elems = array('vacuspeed_order_radios','vacuspeed_order_title','vacuspeed_order_company','vacuspeed_order_street','vacuspeed_order_city','vacuspeed_order_contact','vacuspeed_order_contact_email',
                         'vacuspeed_invoice_title','vacuspeed_invoice_company','vacuspeed_invoice_street','vacuspeed_invoice_city','vacuspeed_invoice_phone','vacuspeed_invoice_fax',
                         'vacuspeed_install_title','vacuspeed_install_commission_nr','vacuspeed_install_street','vacuspeed_install_id','vacuspeed_install_city','vacuspeed_install_type',
-                        'vacuspeed_delivery_title','vacuspeed_delivery_date','vacuspeed_delivery_oncall','vacuspeed_delivery_avis','vacuspeed_delivery_phone','vacuspeed_delivery_time',
+                        'vacuspeed_delivery_title','vacuspeed_delivery_date','vacuspeed_delivery_oncall','vacuspeed_delivery_avis','vacuspeed_delivery_address','vacuspeed_delivery_time',
                         'vacuspeed_transport_type','vacuspeed_unloading_type','vacuspeed_access_type');
   $pdf->DrupalForm($session_data['order_form'], PDF_MARGIN_LEFT, $pdf_page_start_height+175, 0, false, $hidden_elems);
 
