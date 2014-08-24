@@ -1496,6 +1496,162 @@ body.page-node article.node-page.view-mode-full .region-inner {
 
 
 
+/* =============================================================================
+ *    User login / register / password pages
+ * ========================================================================== */
+/*
+ * General settings
+ */
+.page-user #user_register_form,
+.page-user #user_login_form,
+.page-user .create-account,
+.page-user #user_pass_form {
+    clear: both;
+    float: none;
+    width: auto;
+}
+
+.page-user #user-register-form h1,
+.page-user #user_login_form h1,
+.page-user .create-account h2,
+.page-user #user_pass_form h1 {
+    font: normal 300 38px/38px "Open Sans", Arial, sans-serif;
+}
+
+.page-user #user-register-form .form-submit,
+.page-user #user_login_form .form-submit,
+.page-user #user_pass_form .form-submit,
+.page-user a.login-register {
+    margin-left: 0;
+    padding: 0.625em 1em;
+    font-size: 1em;
+    color: white;
+    text-transform: none;
+    line-height: 1.2;
+    -moz-border-radius: 0.25em;
+    -webkit-border-radius: 0.25em;
+    border-radius: 0.25em;
+    border: none;
+    background: #a70014;
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #a70014), color-stop(1, #770014));
+    background: -moz-linear-gradient(top center, #a70014 0%, #770014 100%);
+}
+.page-user #user-register-form .form-submit:hover,
+.page-user #user_pass_form .form-submit:hover,
+.page-user a.login-register:hover {
+    background: #770014;
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #770014), color-stop(1, #a70014));
+    background: -moz-linear-gradient(top center, #770014 0%, #a70014 100%);
+}
+.page-user #user_login_form .form-submit {
+    background: #2698f2;
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #2698f2), color-stop(1, #207cca));
+    background: -moz-linear-gradient(top center, #2698f2 0%, #207cca 100%);
+}
+.page-user #user_login_form .form-submit:hover {
+    background: #207cca;
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #207cca), color-stop(1, #2698f2));
+    background: -moz-linear-gradient(top center, #207cca 0%, #2698f2 100%);
+}
+/*
+ * User login page
+ */
+.page-user form#user-login {
+    position: relative;
+    padding: 2em 0;
+    border: none;
+}
+.page-user #user_login_form,
+.page-user .create-account {
+    display: inline-block;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    overflow: hidden;
+    width: 100%;
+    vertical-align: top;
+    padding: 0 0 2em;
+    border: none;
+}
+.page-user #user_login_form {
+    border-bottom: 1px solid #444;
+}
+
+.page-user form#user-login #user_login_form .form-actions-wrapper {
+    position: relative;
+    padding: 1em 0 0;
+}
+.page-user form#user-login #user_login_form .login-password {
+    display: inline-block;
+    margin:  0.5em 0;
+    color: #207cca;
+}
+.page-user form#user-login #user_login_form .login-password:hover {
+    color: #207cca;
+    text-decoration: underline;
+}
+.page-user form#user-login #user_login_form div.form-actions {
+    display: inline-block;
+    position: absolute;
+    right: 0;
+    vertical-align: middle;
+    margin: 0;
+}
+.page-user a.login-register {
+    display: block;
+    position: absolute;
+    right: 0;
+    bottom: 2em;
+}
+
+/*
+ * User register / password pages
+ */
+.page-user form#user-register-form,
+.page-user form#user-pass {
+    display: inline-block;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    overflow: hidden;
+    max-width: 40em;
+    vertical-align: top;
+    margin: 1em 0;
+}
+.page-user form#user-register-form .form-actions,
+.page-user form#user-pass .form-actions {
+    margin-top: 2em;
+}
+.page-user form#user-register-form .form-actions .form-submit,
+.page-user form#user-pass .form-actions  .form-submit {
+    float: right;
+}
+.page-user form#user-register-form .form-actions .back-to-login,
+.page-user form#user-pass .back-to-login {
+    float: left;
+    margin: 0;
+}
+.page-user form#user-register-form .form-actions .back-to-login .login-account,
+.page-user form#user-pass .back-to-login .login-account {
+    display: inline-block;
+    margin-top:  0.5em;
+    color: #207cca;
+}
+.page-user form#user-register-form .form-actions .back-to-login:before,
+.page-user form#user-pass .back-to-login:before {
+    content: '\f112';
+    font-family: "fontawesome";
+    color: #207cca;
+    text-align: center;
+    padding: 0.3em;
+}
+.page-user form#user-register-form .form-actions .back-to-login .login-account:hover,
+.page-user form#user-pass .back-to-login .login-account:hover {
+    color: #207cca;
+    text-decoration: underline;
+}
+
+
 
 
 

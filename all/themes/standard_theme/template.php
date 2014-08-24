@@ -50,69 +50,84 @@ function standard_theme_preprocess_html(&$vars) {
 // */
 
 
+/* =============================================================================
+ *
+ *      User login / register / password form alter
+ *
+ * ========================================================================== */
+
 /**
- * Process variables for the html template.
+ * Alters the menu entries.
+ * @param $items
  */
-/* -- Delete this line to enable.
-function standard_theme_process_html(&$vars) {
-
+function standard_theme_menu_alter(&$items) {
+  // remove the tabs on the login / register form page
+  $items['user/login']['type'] = MENU_CALLBACK;
+  $items['user/register']['type'] = MENU_CALLBACK;
+  $items['user/password']['type'] = MENU_CALLBACK;
 }
-// */
 
+/**
+ * Alter the user login form.
+ * @param $form
+ * @param $form_state
+ * @param $form_id
+ */
+function standard_theme_form_user_login_alter(&$form, &$form_state, $form_id) {
+  $form['name']['#prefix']  = '<div id="' . $form_id . '_form">';
+  $form['name']['#prefix'] .= '<h1>' . t('Login') . '</h1>';
+  $form['pass']['#suffix']  = '<div class="form-actions-wrapper">';
+  $form['pass']['#suffix'] .= l(t('Forgot your password?'), 'user/password', array('attributes' => array('class' => array('login-password'), 'title' => t('Get a new password'))));
+  $form['actions']['#suffix']  = '</div></div>';
+  if (variable_get('user_register', USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL) != USER_REGISTER_ADMINISTRATORS_ONLY) {
+    $form['actions']['#suffix'] .= '<div class="create-account clearfix">';
+    $form['actions']['#suffix'] .= "\r<h2>" . t('I don\'t have an account') . "</h2>";
+    $form['actions']['#suffix'] .= "\r<div class='create-account-description'><p>" . t("To use this website you need to register.\r Press the button below to apply for an account.") . "</p>";
+    $form['actions']['#suffix'] .= "\r<p>" . t("After the processing of your application you will receive an email with detailed information about the login.") . "</p></div>";
+    $form['actions']['#suffix'] .= "\r" . l(t('Create an account'), 'user/register', array('attributes' => array('class' => array('login-register'), 'title' => t('Create a new account'))));
+    $form['actions']['#suffix'] .= '</div>';
+  }
+}
+
+
+/**
+ * Alter the user registration form.
+ * @param $form
+ * @param $form_state
+ * @param $form_id
+ */
+function standard_theme_form_user_register_form_alter (&$form, &$form_state, $form_id) {
+  $form['account']['name']['#prefix'] = '<div id="' . $form_id . '">';
+  $form['account']['name']['#prefix'] .= '<h1>' . t('Register') . '</h1>';
+  $form['actions']['submit']['#suffix'] = '<div class="back-to-login clearfix">' . l(t('Back to login'), 'user/login', array('attributes' => array('class' => array('login-account'), 'title' => t('Sign in')))) . '</div>';
+  $form['actions']['submit']['#suffix'] .= '</div>';
+}
+
+/**
+ * Alter the user password form.
+ * @param $form
+ * @param $form_state
+ * @param $form_id
+ */
+function standard_theme_form_user_pass_alter (&$form, &$form_state, $form_id) {
+  $form['name']['#prefix'] = '<div id="' . $form_id . '_form">';
+  $form['name']['#prefix'] .= '<h1>' . t('Request a new password') . '</h1>';
+  $form['actions']['#suffix'] = '<div class="back-to-login clearfix">' . l(t('Back to login'), 'user/login', array('attributes' => array('class' => array('login-account'), 'title' => t('Sign in')))) . '</div>';
+  $form['actions']['#suffix'] .= '</div>';
+}
 
 /**
  * Override or insert variables for the page templates.
  */
-/* -- Delete this line if you want to use these functions
 function standard_theme_preprocess_page(&$vars) {
-  //
-  // set title and slogan according to clicked Menu
-  $menu_trail = menu_set_active_trail();
-  if (count($menu_trail) == 1) return;
-
-  // get main menu title
-  $menu_title = $menu_trail[1]['link_title'];
-  if (strpos($menu_title, "menu name") !== false) {
-    // menu with name clicked
-    $vars['site_name'] = 'xy';
-    $vars['site_slogan'] = 'yz';
-
+  // hide title for user registration / login
+  switch (current_path()) {
+    case 'user':
+    case 'user/login':
+    case 'user/register':
+    case 'user/password':
+      $vars['title'] = '';
   }
-
 }
-function standard_theme_process_page(&$vars) {
-}
-// */
 
 
-/**
- * Override or insert variables into the node templates.
- */
-/* -- Delete this line if you want to use these functions
-function standard_theme_preprocess_node(&$vars) {
-}
-function standard_theme_process_node(&$vars) {
-}
-// */
-
-
-/**
- * Override or insert variables into the comment templates.
- */
-/* -- Delete this line if you want to use these functions
-function standard_theme_preprocess_comment(&$vars) {
-}
-function standard_theme_process_comment(&$vars) {
-}
-// */
-
-
-/**
- * Override or insert variables into the block templates.
- */
-/* -- Delete this line if you want to use these functions
-function standard_theme_preprocess_block(&$vars) {
-}
-function standard_theme_process_block(&$vars) {
-}
-// */
