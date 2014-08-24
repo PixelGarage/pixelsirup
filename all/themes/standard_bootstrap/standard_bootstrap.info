@@ -1,4 +1,4 @@
-name = Bootstrap Sub-theme
+name = Standard Bootstrap Theme
 description = A Bootstrap Sub-theme.
 core = 7.x
 base theme = bootstrap
