@@ -99,20 +99,26 @@ function template_preprocess_views_view_isotope(&$vars) {
       // sparse sorting with one item field value.
       // Sparse sorting creates for each distinct field value a new sort criteria [attribute].
       //
-      $sort_value = '';
       $rowparts = explode('<div class="isotope-sparse-sorting">', $row);
       if (count($rowparts) > 1) {
         $len = strpos($rowparts[1], '</div>');
         $sortpart = trim(substr($rowparts[1], 0, $len));
-        // get the value (only first value considered)
-        $sort_value = strtolower(trim(explode(',', $sortpart)[0]));
+        // get the sort values
+        $sort_values = explode(',', $sortpart);
       }
 
-      // create the attribute list
+      // create the attribute list for the row
       $sparse_attr = '';
       foreach ($sort_criteria as $val => $sort_crit) {
-        $val = ($sort_value === $val) ? '(' . $val . ')' : '{undef}';
-        $sparse_attr .= 'data-' . $sort_crit . '="' . $val . '"';
+        $value = '{undef}';
+        foreach ($sort_values as $sort_value) {
+          $sort_value = strtolower(trim($sort_value));
+          if ($sort_value === $val) {
+            $value = '(' . $val . ')';
+            break;
+          }
+        }
+        $sparse_attr .= 'data-' . $sort_crit . '="' . $value . '"';
 
         if ($id == 0) {
           // custom attributes has to start with 'data-' in valid HTML
@@ -163,20 +169,23 @@ function _create_sparse_sort_criteria($rows) {
   $sort_criteria = array();
 
   foreach ($rows as $id => $row) {
-    $sort_value = '';
+    $sort_values = array();
     if (strstr($row, '<div class="isotope-sparse-sorting">')) {
       $rowparts = explode('<div class="isotope-sparse-sorting">', $row);
       $len = strpos($rowparts[1], '</div>');
       $sortpart = trim(substr($rowparts[1], 0, $len));
-      // get the value (only first value considered)
-      $sort_value = strtolower(trim(explode(',', $sortpart)[0]));
 
+      // get the sort values
+      $sort_values = explode(',', $sortpart);
     }
 
     // create the attribute list
-    if (strlen($sort_value) > 0 && !array_key_exists($sort_value, $sort_criteria)) {
-      // add new attribute with new value
-      $sort_criteria[$sort_value] = 'sort-criteria-' . drupal_clean_css_identifier($sort_value);
+    foreach ($sort_values as $sort_value) {
+      $sort_value = strtolower(trim($sort_value));
+      if (strlen($sort_value) > 0 && !array_key_exists($sort_value, $sort_criteria)) {
+        // add new attribute with new value
+        $sort_criteria[$sort_value] = 'sort-criteria-' . drupal_clean_css_identifier($sort_value);
+      }
     }
 
   }

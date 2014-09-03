@@ -53,10 +53,10 @@ class views_plugin_style_isotope_sort_views extends views_plugin_style {
         '#markup' => t('<h2>How to create isotope sort buttons</h2>' .
           '<p>With this style you can create a sort button group, which then is automatically connected to the Isotope container on the same page, ' .
           'if that container is enabled for sorting (meaning contains sort attributes for each item).</p><br>' .
-          '<h4>"Best practice" to create a sort button group containing all sort criteria available.</h4> <ol>' .
+          '<h4>"Best practice" to create a sort button group containing all sort criteria of the isotope items.</h4> <ol>' .
           '<li>Create a taxonomy vocabulary containing the sort criteria names as terms.</li> ' .
           '<li>The first vocabulary term defines the name for the first sort criteria in the rows sorting div-element (see Isotope layout for detailed explanation) and so on.</li>' .
-          '<li>Create a new view (block) and add that taxonomy vocabulary as filter criteria to the view.</li> ' .
+          '<li>Create a new view (block) with the taxonomy vocabulary as view filter criteria.</li> ' .
           '<li>Select the format "Isotope sorting" in the view format section (you have it obviously already selected ;-). </li>' .
           '<li>Choose Field row style. In its settings dialog, disable the flag "Provide default field wrapper elements". This assures that the plain term value is listed without any wrapper.</li>' .
           '<li>Add the name of the taxonomy term as field and make sure that the flag "Link this field to its taxonomy term page" is disabled, as well as the label flag.</li>' .

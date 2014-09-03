@@ -213,19 +213,19 @@
         try {
 
             // check if sortable items and sort button groups have been defined
-            var $sortButtons = Drupal.settings.isotope_sort;
-            var hasSortButtons = (typeof $sortButtons != 'undefined') && Object.keys($sortButtons).length > 0;
+            var $sortButtonGroups = Drupal.settings.isotope_sort;
+            var hasSortButtons = (typeof $sortButtonGroups != 'undefined') && Object.keys($sortButtonGroups).length > 0;
 
             if (settings.sort_enabled && hasSortButtons) {
 
                 // Iterate through  sort button containers (usually one) and add button click events
-                $.each($sortButtons, function (buttonContainerId, sortSettings) {
+                $.each($sortButtonGroups, function (buttonContainerId, sortSettings) {
                     //
                     // get button group with given id
-                    var $sort_button_container = $('#' + buttonContainerId),
+                    var $sortButtonGroup = $('#' + buttonContainerId),
                         groupSortBy = [],
                         resetButtonSelection = function () {
-                            $sort_button_container.find('.button.selected').removeClass('selected');
+                            $sortButtonGroup.find('.button.selected').removeClass('selected');
                         },
                         updateItemSortClasses = function (attributes) {
                             var $items = $container.find('div.isotope-item');
@@ -239,7 +239,7 @@
 
                     //
                     // attach button events
-                    $sort_button_container.on('click', '.button', function() {
+                    $sortButtonGroup.on('click', '.button', function() {
                         // disable uncover animation for all items
                         _uncoverAllItems();
 
@@ -278,17 +278,26 @@
 
                             // add/remove 'selected' from 'None' button depending on selected filter(s)
                             if (groupSortBy.length > 0) {
-                                $sort_button_container.find('.button.reset').removeClass('selected');
+                                $sortButtonGroup.find('.button.reset').removeClass('selected');
                             } else {
-                                $sort_button_container.find('.button.reset').addClass('selected');
+                                $sortButtonGroup.find('.button.reset').addClass('selected');
                             }
 
-                            // add .unsorted class to all not sortable items (attribute is undefined)
+                            // add .non-sortable class to all not sortable items (attribute is undefined)
                             var attributes = '';
                             for (var i = 0; i < groupSortBy.length; i++) {
-                                var attr = settings.sort_data[groupSortBy[i]];
-                                attr = attr.replace(']', '*="{undef}"]')
-                                attributes += (i == 0) ? attr : ', ' + attr;
+                                if (groupSortBy[i] in settings.sort_data) {
+                                    // sort criteria defined, look for all non-sortable items( no value for this criteria)
+                                    var attr = settings.sort_data[groupSortBy[i]];
+                                    attr = attr.replace(']', '*="{undef}"]');
+                                    attributes += (i == 0) ? attr : ', ' + attr;
+
+                                } else {
+                                    // sort criteria not defined on items (possible for sparse sorting)
+                                    // => set all items non-sortable
+                                    attributes = '*';
+                                    break;
+                                }
 
                             }
                             updateItemSortClasses(attributes);
