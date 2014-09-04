@@ -203,7 +203,7 @@ function theme_isotope_filter_button_group($variables) {
 
   // create top button group
   $output = ($parent == 0)
-    ? '<div id="' . $button_group_id . '" class="filters top-button-group clearfix">'
+    ? '<div id="' . $button_group_id . '" class="filters top-button-group button-group clearfix">'
     : '<div class="filters button-group clearfix">';
 
   // add reset button, if label is set
