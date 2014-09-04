@@ -22,7 +22,7 @@ function template_preprocess_views_view_isotope_sort(&$vars) {
   $options = $vars['options'];
   $rows = $vars['rows'];
   $sort_criteria = array();
-  $class_array = array();
+  $classes_array = sizeof($vars['classes_array']) > 0 ? $vars['classes_array'] : array();
 
   foreach ($rows as $id => $row) {
     $row = trim($row);
@@ -33,7 +33,7 @@ function template_preprocess_views_view_isotope_sort(&$vars) {
     } else {
       $sort_criteria[$id] = 'sort-criteria-' . $id;
     }
-    $class_array[$id] = $clean_row;
+    $classes_array[$id] .= ' ' . $clean_row;
   }
 
   // get options and add unique id for button group
@@ -44,7 +44,7 @@ function template_preprocess_views_view_isotope_sort(&$vars) {
   $vars['title'] = $options['isotope_sort_title'];
   $vars['reset_label'] = ($options['isotope_sort_reset_label'] === '<none>') ? '' : $options['isotope_sort_reset_label'];
   $vars['sort_criteria'] = $sort_criteria;
-  $vars['class_array'] = $class_array;
+  $vars['classes_array'] = $classes_array;
 
   isotope_sort_apply($button_group_id, $options);
 }

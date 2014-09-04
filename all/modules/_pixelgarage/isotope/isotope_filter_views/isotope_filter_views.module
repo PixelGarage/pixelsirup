@@ -16,6 +16,7 @@ function isotope_filter_views_views_api() {
  */
 function isotope_filter_views_theme($existing, $type, $theme, $path) {
   return array(
+    /*
     'isotope_filter_tree' => array(
       'variables' => array(
         'view' => NULL,
@@ -24,7 +25,7 @@ function isotope_filter_views_theme($existing, $type, $theme, $path) {
         'button_group_id' => NULL,
         'filters' => array(),
       ),
-    ),
+    ),*/
     'isotope_filter_tree_inner' => array(
       'variables' => array(
         'view' => NULL,
@@ -33,6 +34,7 @@ function isotope_filter_views_theme($existing, $type, $theme, $path) {
         'result' => array(),
         'parent' => NULL,
         'button_group_id' => NULL,
+        'classes_array' => array(),
         'filters' => array(),
       ),
     ),
@@ -51,6 +53,9 @@ function isotope_filter_views_theme($existing, $type, $theme, $path) {
  * Pre-process function for theme-hook isotope_filter_tree (implemented as function theme_isotope_filter_tree).
  */
 function template_preprocess_isotope_filter_tree (&$vars) {
+  // Run preprocess function for unformatted style
+  template_preprocess_views_view_unformatted($vars);
+
   $rows = $vars['rows'];
   $filter_array = array();
 
@@ -88,6 +93,7 @@ function theme_isotope_filter_tree($variables) {
   $rows = $variables['rows'];
   $title = ($options['isotope_filter_title'] === '<none>') ? '' : $options['isotope_filter_title'];
   $result = $view->result;
+  $classes_array = sizeof($variables['classes_array']) > 0 ? $variables['classes_array'] : array();
 
   // check, if hierarchy information (relationship to parent term) is set in the view
   if (! property_exists($result[0], 'taxonomy_term_data_taxonomy_term_hierarchy_tid')) {
@@ -111,6 +117,7 @@ function theme_isotope_filter_tree($variables) {
       'result' => $result,
       'parent' => 0,
       'button_group_id' => $variables['button_group_id'],
+      'classes_array' => $classes_array,
       'filters' => $variables['filters'],
     )
   );
@@ -138,6 +145,7 @@ function theme_isotope_filter_tree($variables) {
  * @internal param $button_group_id The id of button group to be created
  * @internal param $reset_label The label of the reset button, if any
  * @internal param $filters The array of the cleaned filter values in the same order than the rows.
+ * @internal param $classes_array The array of the row classes.
  * @return string The markup for the hierarchical filter buttons.
  */
 function theme_isotope_filter_tree_inner($variables) {
@@ -146,6 +154,7 @@ function theme_isotope_filter_tree_inner($variables) {
   $result = $variables['result'];
   $parent = $variables['parent'];
   $button_group_id = $variables['button_group_id'];
+  $classes_array = $variables['classes_array'];
   $filters = $variables['filters'];
   $reset_label = ($options['isotope_filter_reset_label'] === '<none>') ? '' : $options['isotope_filter_reset_label'];
   $render_flat = $options['isotope_filter_render_flat'];
@@ -154,7 +163,7 @@ function theme_isotope_filter_tree_inner($variables) {
   foreach ($result as $i => $record) {
     if ($render_flat) {
       // render flat button group
-      $buttons[] = '<span class="button ' . $filters[$i] . '" data-filter=".' .  $filters[$i] . '">' . $rows[$i] . '</span>';
+      $buttons[] = '<span class="button ' . $classes_array[$i] . ' ' . $filters[$i] . '" data-filter=".' .  $filters[$i] . '">' . $rows[$i] . '</span>';
 
     } else {
       // render hierarchical button group, if parent info is available
@@ -162,7 +171,7 @@ function theme_isotope_filter_tree_inner($variables) {
         $variables['parent'] = $record->tid;
         $subgroup = theme_isotope_filter_tree_inner($variables);
         $button_start = ($subgroup !== '') ? '<span class="button parent ' : '<span class="button ';
-        $buttons[] = $button_start . $filters[$i] . '" data-filter=".' .  $filters[$i] . '">' . $rows[$i] . $subgroup . '</span>';
+        $buttons[] = $button_start . $classes_array[$i] . ' ' . $filters[$i] . '" data-filter=".' .  $filters[$i] . '">' . $rows[$i] . $subgroup . '</span>';
 
       }
     }

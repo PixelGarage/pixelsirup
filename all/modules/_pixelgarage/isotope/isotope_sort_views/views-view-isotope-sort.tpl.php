@@ -13,7 +13,7 @@
       <span class="button reset selected" data-sort-by="original-order"><?php print $reset_label; ?></span>
     <?php endif; ?>
     <?php foreach ($rows as $id => $row): ?>
-      <span class="button <?php print $class_array[$id]; ?>" data-sort-by="<?php print $sort_criteria[$id]; ?>"><?php print $row; ?></span>
+      <span class="button <?php print $classes_array[$id]; ?>" data-sort-by="<?php print $sort_criteria[$id]; ?>"><?php print $row; ?></span>
     <?php endforeach; ?>
   </div>
 </div>
