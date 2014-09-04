@@ -124,7 +124,7 @@
 .ui-group .top-button-group {
     position: relative;
 }
-.ui-group .filters.button-group {
+.ui-group .filters.child-button-group {
     /* absolute positioning of subgroup relative to top-group is done in java script */
     display: none;
     position: absolute;
