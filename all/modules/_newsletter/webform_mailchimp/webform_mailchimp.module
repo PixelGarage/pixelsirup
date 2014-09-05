@@ -43,11 +43,11 @@ function webform_mailchimp_webform_submission_insert($node, $submission) {
         $mailchimp_lists[] = $field['extra']['mailchimp_list'];
         // Need to know if we should look for our own email field or another.
         if ($field['extra']['use_existing_email_field'] != 'mailchimp_field') {
-          if (!empty($submission->data[$key][0])) {
+          if (!empty($submission->data[$key]['value'][0])) {
             // Loop through components again to find our email field.
             foreach ($node->webform['components'] as $key2 => $field2) {
               if ($field2['form_key'] == $field['extra']['use_existing_email_field']) {
-                $email_address = $submission->data[$key2][0];
+                $email_address = $submission->data[$key2]['value'][0];
               }
             }
           }
@@ -58,7 +58,7 @@ function webform_mailchimp_webform_submission_insert($node, $submission) {
         }
         // We have our own email field.
         else {
-          $email_address = $submission->data[$key][0];
+          $email_address = $submission->data[$key]['value'][0];
         }
 
         // Retrieve mergefields and create a merge array with key webform key
@@ -101,7 +101,7 @@ function webform_mailchimp_webform_submission_insert($node, $submission) {
         if (!empty($mergefields_key_array[$field['form_key']])) {
           // This is probably a bit to easy... The delta value is not taken
           // into account.
-          $mergefields_replacements[$mergefields_key_array[$field['form_key']]] = $submission->data[$key][0];
+          $mergefields_replacements[$mergefields_key_array[$field['form_key']]] = $submission->data[$key]['value'][0];
         }
       }
     }
@@ -126,9 +126,9 @@ function webform_mailchimp_webform_submission_insert($node, $submission) {
         }
       }
       foreach ($groupfields_replacements as $groupname => $values_array) {
-        $mergefields_replacements['GROUPINGS'][] = array(
+        $mergefields_replacements['groupings'][] = array(
           'name' => $groupname,
-          'groups' => implode(',', $values_array),
+          'groups' => $values_array,
         );
       }
     }
@@ -136,9 +136,10 @@ function webform_mailchimp_webform_submission_insert($node, $submission) {
     // If we have an email address and a list is set, try to subscribe the user.
     if ($email_address != '' && !empty($mailchimp_lists)) {
       $q = mailchimp_get_api_object();
+
       if ($q) {
         foreach ($mailchimp_lists as $mailchimp_list) {
-          $success = $q->listSubscribe($mailchimp_list, $email_address, $mergefields_replacements, 'html', FALSE, TRUE);
+          $success = $q->lists->subscribe($mailchimp_list, array('email' => $email_address), $mergefields_replacements, 'html', FALSE, TRUE);
           if ($success) {
             watchdog('webform_mailchimp', 'E-mail subscribed: %email', array('%email' => $email_address), WATCHDOG_INFO);
           }
