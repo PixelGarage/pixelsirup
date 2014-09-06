@@ -208,7 +208,7 @@ function theme_isotope_filter_button_group($variables) {
 
   // add reset button, if label is set
   if ($parent == 0 && isset($reset_label) && $reset_label !== '') {
-    $output .= '<span class="button reset selected" data-filter="*">' . $reset_label . '</span>';
+    $output .= '<span class="button reset selected" data-filter="*">' . check_plain($reset_label) . '</span>';
   }
 
   // print buttons
