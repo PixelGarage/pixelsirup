@@ -17,13 +17,15 @@ Clone GitHub repository:
     Set the parent directory to the newly created project folder (the cloned sites folder will be placed inside this folder)
     Choose always 'sites' for the directory name.
     --> the sites folder is cloned to the new project folder and is connected with the GitHub version for Pull/Push operations.
-6) Create an empty folder 'files' in the directory ~/Sites/projectFolder/sites/default
+6) Create an empty folder 'files' in the directory ~/Sites/projectFolder/sites/default or if the project is already published
+    on the Stage Server, synchronize the folder from there.
 
 Install the local Database:
 1) Create a new DB in local phpMyAdmin with a unique name pixelgar_dp[ProjectName] (use this pattern)
 2) Import DB-Backup found in folder sites/default/files_private/backup_migrate/manual/db_xy_stage….mysql.gz into new DB (see phpMyAdmin).
 3) Copy the settings.php file from the xySite project into folder ~/Sites/xySite/sites/default (find file in same folder in xySite project)
 4) Replace the db name in this file with the project db name (see above).
+5) Call localhost/update.php in the browser to update the DB, if necessary.
 
 Start website in browser:
 1) Set the document root of MAMP (in Preferences->WeServer) to the new directory, e.g. ~/Sites/projectFolder (important, otherwise site navigation fails)
