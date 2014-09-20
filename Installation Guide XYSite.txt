@@ -35,14 +35,14 @@ Passwort:	usual
 Start implementing in PHPStorm....
 
 PHPStorm:
-IMPORTANT!!!!!!! Never work in the Master branch, always create a branch for each task you implement.
+IMPORTANT!!!!!!! Never work in the Master branch, always create a NEW BRANCH for each task you implement.
 
-1) Add a new branch with a working title (describing what you are doing in this branch).
-2) Push this branch often to the GitHub (code backup).
-3) When you're finished with the branch, create a Pull Request (in menu VCS->Git->Create Pull Request)
+1) Add a new branch named with a working title (describing what you are doing in this branch).
+2) Implement your task in this branch and push as often as needed to GitHub (code backup).
+3) When you're finished with the task, create a Pull Request (in menu VCS->Git->Create Pull Request)
     - asked for merging into Master-Branch
     - give a short description of the work you did, finished...
-    - the task will be merged into the Master by an admin
+    - the task will be merged into the Master by an admin (a discussion about the changes in the branch can be hold on GitHub before integration)
 4) Open a new branch for another task you implement, etc.etc.
 
 
