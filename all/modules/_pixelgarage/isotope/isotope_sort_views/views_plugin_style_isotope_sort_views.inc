@@ -23,6 +23,9 @@ class views_plugin_style_isotope_sort_views extends views_plugin_style {
       if (is_int($default_value)) {
         $options[$option]['bool'] = TRUE;
       }
+      if (is_string($default_value)) {
+        $options[$option]['translatable'] = TRUE;
+      }
     }
 
     return $options;

@@ -59,19 +59,7 @@
  *   Fonts
  * ========================================================================== */
 
-/* Title font
-@font-face {
-    font-family: 'josefin_slabbold';
-    src: url('../fonts/webfontkit-Josefin/josefinslab-bold-webfont.eot');
-    src: url('../fonts/webfontkit-Josefin/josefinslab-bold-webfont.eot?#iefix') format('embedded-opentype'),
-    url('../fonts/webfontkit-Josefin/josefinslab-bold-webfont.woff') format('woff'),
-    url('../fonts/webfontkit-Josefin/josefinslab-bold-webfont.ttf') format('truetype'),
-    url('../fonts/webfontkit-Josefin/josefinslab-bold-webfont.svg#josefin_slabbold') format('svg');
-    font-weight: normal;
-    font-style: normal;
 
-}
-*/
 
 /* =============================================================================
  *   General reset
@@ -81,7 +69,7 @@
  */
 .at-panel > .region > .region-inner,
 .at-panel .at-panel > .region > .region-inner {
-    margin: 0.5em 0;
+    margin: 0;
 }
 
 /*
@@ -92,9 +80,128 @@
 .block .block-title {
     margin: 0;
 }
+
+/* =============================================================================
+ *   Fields global styling
+ * ========================================================================== */
 /*
- * Fields
+ *  Text areas resizing handlers
  */
+.resizable-textarea .grippie {
+    display: none;
+}
+
+.field-label {
+    /* table layout */
+    margin: 0;
+    font-size: 1em;
+    line-height: 1.5;
+    font-weight: bold;
+    color: #808080;
+    width: 7em;
+}
+
+/* Read more link */
+.field-name-node-link {
+    margin: 0 1.2em;
+    float: right;
+}
+.field-name-node-link a:after {
+    content: '\f054';
+    font-family: "fontawesome";
+    font-size: 1em;
+    padding-left: 1em;
+}
+
+/* Google map */
+.google_map_field_display {
+    height: 20em;
+    width: 100%;
+    margin: 0;
+}
+
+
+/* =============================================================================
+ *   Misc Global reset
+ * ========================================================================== */
+/*
+ *   Action links
+ */
+
+ul.action-links {
+    margin: 1.25em 0 0;
+    list-style: none;
+}
+
+ul.action-links li {}
+
+/*
+ * Generic styles for the more link
+ */
+.more-link {}
+
+/*
+ * Generic styles for links. See the ul.links declaration in node and comment stylesheets
+ */
+ul.links {
+    margin: 0;
+    padding: 0;
+}
+
+ul.links.inline {
+    display: block;
+}
+
+ul.links li {
+    display: inline;
+    list-style: none;
+    padding: 0 0.625em 0 0;
+}
+
+/*
+ * Feed icons
+ */
+.feed-icon {}
+
+/*
+ * Aggregator feed source
+ */
+#aggregator .feed-source .feed-icon {
+    display: inline;
+    float: none;
+    margin-right: 0.625em;
+}
+
+.feed-details dt,
+.feed-details dd {
+    display: inline;
+    margin: 0;
+}
+
+/*
+ * Search results are an ordered list so reset the margin
+ */
+.search-results {
+    margin: 0;
+}
+
+/*
+ * Buttons used by contrib modules like Media
+ */
+a.button {
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+}
+
+/*
+ * Password confirmation
+ */
+.password-parent,
+.confirm-parent {
+    margin: 0;
+}
+
 
 /* =============================================================================
  *   Base
@@ -142,9 +249,29 @@ var {
     font-family: Consolas, Monaco, 'Courier New', Courier, monospace, sans-serif;
 }
 
+a,
+a:link,
+a:visited {
+    text-decoration: none;
+    color: #222;
+}
+
+a:active,
+a.active,
+a:hover,
+a:focus {
+    text-decoration: none;
+    color: #808080;
+}
+
+
 /* =============================================================================
  *   Wrappers
  * ========================================================================== */
+#page-title {
+    margin: 0 0.625em;
+}
+
 #header,
 #menu-bar,
 #breadcrumb,
@@ -164,14 +291,14 @@ var {
  * Top and bottom menus wrappers
  */
 .region-leaderboard > .region-inner {
-    margin: 0.625em;
+    margin: 0;
 }
 .region-help > .region-inner,
 .region-secondary-content > .region-inner {
-    margin: 0 0.625em 0.5em;
+    margin: 0 0 0.5em;
 }
 .region-tertiary-content > .region-inner {
-    margin: 0 0.625em 2em;
+    margin: 0 0 2em;
 }
 
 /*
@@ -179,38 +306,38 @@ var {
  */
 #header > .branding-elements,
 #header > .region-header > .region-inner {
-    margin: 0 0.625em 0.5em;
+    margin: 0 0 0.5em;
 }
 /*
  * Menu bar wrapper
  */
 #menu-bar > nav.menu-bar-wrapper {
     position: static;
-    margin: 0 0.625em 0.5em;
+    margin: 0 0 0.5em;
 }
 /*
  * Breadcrumb wrapper
  */
 #breadcrumb > nav.breadcrumb-wrapper {
-    margin: 0 0.625em 0.5em;
+    margin: 0 0 0.5em;
 }
 /*
  *  message panel
  */
 #messages > div.messages {
-    margin: 0 0.625em 0.5em;
+    margin: 0 0 0.5em;
 }
 /*
  * Main content wrapper
  */
 #columns > .content-column > .content-inner {
-    margin: 0 0.625em 0.5em;
+    margin: 0 0 0.5em;
 }
 /*
  * Footer wrapper
  */
 #footer > .region-footer > .region-inner {
-    margin: 0 0.625em 0.5em;
+    margin: 0 0 0.5em;
 }
 
 
@@ -281,6 +408,36 @@ var {
     position: relative;
     margin: 0;
     font: inherit;
+}
+
+
+/* =============================================================================
+ *   Search box in header
+ * ========================================================================== */
+#header #search-box {
+    position: absolute;
+    top: 48px;
+    right: 20px;
+    z-index: 6;
+}
+#header #search-box form {
+    margin: 0;
+}
+#header #search-box .form-type-textfield label,
+#header #search-box .form-submit {
+    display: none;
+}
+#header #search-box .form-type-textfield {
+    margin: 0;
+}
+#header #search-box .form-type-textfield input {
+    width: 75px;
+    font-family: "FedraSansStdLight", sans-serif;
+    font-size: 13px;
+    text-indent: 15px;
+    line-height: 1;
+    border: none;
+    background: #f8f8f8 url("images/icon_search.png") no-repeat 0 2px;
 }
 
 
@@ -586,13 +743,29 @@ a#superfish-1-toggle.sf-expanded:before {
 /* =============================================================================
  *   Messages
  * ========================================================================== */
+
+#messages {
+    padding: 1px 0; /* Prevents margin collapsing */
+}
+
+/* Left and right margin are set by the global gutter width */
+div.messages {
+    margin-bottom: 0.625em;
+    margin-top: 0.625em;
+    -webkit-border-radius: 0.4em;
+    -moz-border-radius: 0.4em;
+    border-radius: 0.4em;
+}
+
 div.messages ul {
-    margin: 0;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 div.status {}
 
 div.warning {}
+
 tr.warning {}
 
 div.error,
@@ -601,26 +774,6 @@ tr.error {}
 .error {}
 
 .warning {}
-
-
-/* =============================================================================
- *   Links
- * ========================================================================== */
-
-a,
-a:link,
-a:visited {
-    text-decoration: none;
-    color: #222;
-}
-
-a:active,
-a.active,
-a:hover,
-a:focus {
-    text-decoration: none;
-    color: #808080;
-}
 
 
 /* =============================================================================
@@ -676,88 +829,6 @@ ul.pager li.pager-first {}
 ul.pager li.pager-previous {}
 ul.pager li.pager-next {}
 ul.pager li.pager-last {}
-
-
-/* =============================================================================
- *   Misc Global Styles
- * ========================================================================== */
-/*
- *   Action links
- */
-
-ul.action-links {
-    margin: 1.25em 0 0;
-    list-style: none;
-}
-
-ul.action-links li {}
-
-/*
- * Generic styles for the more link
- */
-.more-link {}
-
-/*
- * Generic styles for links. See the ul.links declaration in node and comment stylesheets
- */
-ul.links {
-    margin: 0;
-    padding: 0;
-}
-
-ul.links.inline {
-    display: block;
-}
-
-ul.links li {
-    display: inline;
-    list-style: none;
-    padding: 0 0.625em 0 0;
-}
-
-/*
- * Feed icons
- */
-.feed-icon {}
-
-/*
- * Aggregator feed source
- */
-#aggregator .feed-source .feed-icon {
-    display: inline;
-    float: none;
-    margin-right: 0.625em;
-}
-
-.feed-details dt,
-.feed-details dd {
-    display: inline;
-    margin: 0;
-}
-
-/*
- * Search results are an ordered list so reset the margin
- */
-.search-results {
-    margin: 0;
-}
-
-/*
- * Buttons used by contrib modules like Media
- */
-a.button {
-    -webkit-appearance: button;
-    -moz-appearance: button;
-    appearance: button;
-}
-
-/*
- * Password confirmation
- */
-.password-parent,
-.confirm-parent {
-    margin: 0;
-}
 
 
 /* =============================================================================
@@ -955,39 +1026,6 @@ form fieldset legend {
 
 
 /* =============================================================================
- *   Messages
- * ========================================================================== */
-
-#messages {
-    padding: 1px 0; /* Prevents margin collapsing */
-}
-
-/* Left and right margin are set by the global gutter width */
-div.messages {
-    margin-bottom: 0.625em;
-    margin-top: 0.625em;
-}
-
-div.messages ul {
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
-div.status {}
-
-div.warning {}
-
-tr.warning {}
-
-div.error,
-tr.error {}
-
-.error {}
-
-.warning {}
-
-
-/* =============================================================================
  *   Tables
  * ========================================================================== */
 
@@ -1063,6 +1101,175 @@ tr.odd td.active {
 tr.even td.active {
     background-color: #ebebeb;
 }
+
+
+/* =============================================================================
+ *
+ *
+ *      Administrator mode specific element styling starts here...
+ *
+ *
+ * ========================================================================== */
+
+/*
+ * Admin menu overrides
+ */
+#admin-menu {
+    margin: 0;
+    padding: 0;
+}
+
+/*
+ * Devel Module
+ */
+.dev-query {
+    background: #eee;
+    padding: 2em;
+}
+
+/*
+ * Styleguide module tweaks
+ */
+#styleguide-header {
+    padding: 0 0.625em;
+}
+
+#styleguide-header .item-list {
+    font-family: inherit;
+    margin: 0 1.25em 1.25em 0;
+    min-height: 260px;
+    width: auto;
+}
+
+#tasks {
+    margin-bottom: 1em;
+}
+
+
+/* =============================================================================
+ *   Tabs (local tasks)
+ * ========================================================================== */
+
+ul.primary {
+    border-bottom-color: #ccc;
+    margin: 1.25em 0;
+    padding: 0 0 0 5px;
+}
+
+ul.primary li {
+    display: block;
+    float: left;
+    margin: 0 1px -1px;
+}
+
+ul.primary li a {
+    background-color: #f5f5f5;
+    border-color: #ccc;
+    margin-right: 1px;
+    padding: 0 0.625em;
+    display: block;
+    float: left;
+    height: 1.5em;
+    line-height: 1.5em;
+}
+
+ul.primary li a:hover,
+ul.primary li a:focus {
+    background-color: #eee;
+    border-color: #ccc;
+}
+
+ul.primary li.active a,
+ul.primary li.active a:hover,
+ul.primary li.active a:focus {
+    background-color: #fff;
+    border-bottom-color: #fff;
+}
+
+ul.secondary {
+    border-bottom: 1px solid #ccc;
+    margin: 1em 0 0;
+    padding: 0 .3em 1em;
+}
+
+ul.secondary li {
+    border-right: 0;
+    list-style: none;
+    padding: 0 0.625em 0 0;
+}
+
+ul.secondary li a {}
+
+ul.secondary li a:hover,
+ul.secondary li a.active {
+    border-bottom: none;
+    text-decoration: underline;
+}
+
+
+/* =============================================================================
+ *   Unpublished nodes
+ * ========================================================================== */
+
+/*
+ * Unpublished nodes
+ */
+.node-unpublished,
+.comment-unpublished {}
+
+.node-unpublished,
+.comment-unpublished {}
+
+.node-unpublished p.unpublished,
+.comment-unpublished p.unpublished {
+    color: pink;
+    color: rgba(239, 170, 170, 0.4);
+    font-family: Impact,"Arial Narrow",Helvetica,sans-serif;
+    font-size: 4em;
+    font-weight: bold;
+    height: 0;
+    line-height: 1.2;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    text-align: center;
+    text-transform: uppercase;
+    word-wrap: break-word;
+}
+
+
+/* =============================================================================
+ *    Maintenance pages
+ * ========================================================================== */
+
+.maintenance-page {}
+.maintenance-page .container {
+    padding: 2.5em 0;
+}
+
+.maintenance-page #site-name,
+.maintenance-page #page-title {
+    margin: 0;
+}
+
+.db-offline {}
+
+.db-offline .container {
+    margin: 0 auto;
+    padding: 2.5em 0;
+    width: 100%;
+    max-width: 960px;
+}
+
+.db-offline div.messages {
+    margin: 1.25em 0 0;
+}
+
+.db-offline #content {
+    padding: 1.25em 0;
+}
+
+
 
 
 /* =============================================================================
@@ -1473,29 +1680,6 @@ tr.even td.active {
  *
  * ========================================================================== */
 
-/* ==================================================================================
- *   Page styling
- * ================================================================================== */
-/*
- *  Front page
- */
-
-
-/*
- *  Basic page content type (entry pages for sections)
- */
-body.page-node article.node-page.view-mode-full {
-    /* center intro pages */
-    width: 20.25em; /* 324px */
-    margin: 5em auto;
-    border: 2px solid #808080;
-}
-body.page-node article.node-page.view-mode-full .region-inner {
-    margin: 1.25em;
-}
-
-
-
 /* =============================================================================
  *    User login / register / password pages
  * ========================================================================== */
@@ -1652,222 +1836,37 @@ body.page-node article.node-page.view-mode-full .region-inner {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-/* =============================================================================
- *   Fields (classes defined and set in Display Suite)
- * ========================================================================== */
+/* ==================================================================================
+ *   Specific Page styling
+ * ================================================================================== */
 /*
- *  Text areas resizing handlers
+ *  Front page
  */
 
-.resizable-textarea .grippie {
-    display: none;
-}
-
-.field-label {
-    /* table layout */
-    margin: 0;
-    font-size: 1em;
-    line-height: 1.5;
-    font-weight: bold;
-    color: #808080;
-    width: 7em;
-}
-
-/* Read more link */
-.field-name-node-link {
-    margin: 0 1.2em;
-    float: right;
-}
-.field-name-node-link a:after {
-    content: '\f054';
-    font-family: "fontawesome";
-    font-size: 1em;
-    padding-left: 1em;
-}
-
-/* Google map */
-.google_map_field_display {
-    height: 20em;
-    width: 100%;
-    margin: 0;
-}
-
-
-
-/* =============================================================================
- *
- *
- *      Administrator mode specific element styling starts here...
- *
- *
- * ========================================================================== */
 
 /*
- * Admin menu overrides
+ *  Basic page content type (entry pages for sections)
  */
-#admin-menu {
-    margin: 0;
-    padding: 0;
+body.page-node article.node-page.view-mode-full {
+    /* center intro pages */
+    width: 20.25em; /* 324px */
+    margin: 5em auto;
+    border: 2px solid #808080;
 }
-
-/*
- * Devel Module
- */
-.dev-query {
-    background: #eee;
-    padding: 2em;
-}
-
-/*
- * Styleguide module tweaks
- */
-#styleguide-header {
-    padding: 0 0.625em;
-}
-
-#styleguide-header .item-list {
-    font-family: inherit;
-    margin: 0 1.25em 1.25em 0;
-    min-height: 260px;
-    width: auto;
-}
-
-#tasks {
-    margin-bottom: 1em;
+body.page-node article.node-page.view-mode-full .region-inner {
+    margin: 1.25em;
 }
 
 
-/* =============================================================================
- *   Tabs (local tasks)
- * ========================================================================== */
-
-ul.primary {
-    border-bottom-color: #ccc;
-    margin: 1.25em 0;
-    padding: 0 0 0 5px;
-}
-
-ul.primary li {
-    display: block;
-    float: left;
-    margin: 0 1px -1px;
-}
-
-ul.primary li a {
-    background-color: #f5f5f5;
-    border-color: #ccc;
-    margin-right: 1px;
-    padding: 0 0.625em;
-    display: block;
-    float: left;
-    height: 1.5em;
-    line-height: 1.5em;
-}
-
-ul.primary li a:hover,
-ul.primary li a:focus {
-    background-color: #eee;
-    border-color: #ccc;
-}
-
-ul.primary li.active a,
-ul.primary li.active a:hover,
-ul.primary li.active a:focus {
-    background-color: #fff;
-    border-bottom-color: #fff;
-}
-
-ul.secondary {
-    border-bottom: 1px solid #ccc;
-    margin: 1em 0 0;
-    padding: 0 .3em 1em;
-}
-
-ul.secondary li {
-    border-right: 0;
-    list-style: none;
-    padding: 0 0.625em 0 0;
-}
-
-ul.secondary li a {}
-
-ul.secondary li a:hover,
-ul.secondary li a.active {
-    border-bottom: none;
-    text-decoration: underline;
-}
 
 
-/* =============================================================================
- *   Unpublished nodes
- * ========================================================================== */
-
-/*
- * Unpublished nodes
- */
-.node-unpublished,
-.comment-unpublished {}
-
-.node-unpublished,
-.comment-unpublished {}
-
-.node-unpublished p.unpublished,
-.comment-unpublished p.unpublished {
-    color: pink;
-    color: rgba(239, 170, 170, 0.4);
-    font-family: Impact,"Arial Narrow",Helvetica,sans-serif;
-    font-size: 4em;
-    font-weight: bold;
-    height: 0;
-    line-height: 1.2;
-    margin: 0;
-    padding: 0;
-    overflow: visible;
-    text-align: center;
-    text-transform: uppercase;
-    word-wrap: break-word;
-}
 
 
-/* =============================================================================
- *    Maintenance pages
- * ========================================================================== */
 
-.maintenance-page {}
-.maintenance-page .container {
-    padding: 2.5em 0;
-}
 
-.maintenance-page #site-name,
-.maintenance-page #page-title {
-    margin: 0;
-}
 
-.db-offline {}
 
-.db-offline .container {
-    margin: 0 auto;
-    padding: 2.5em 0;
-    width: 100%;
-    max-width: 960px;
-}
 
-.db-offline div.messages {
-    margin: 1.25em 0 0;
-}
 
-.db-offline #content {
-    padding: 1.25em 0;
-}
 
 

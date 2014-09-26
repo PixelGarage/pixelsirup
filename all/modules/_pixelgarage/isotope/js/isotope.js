@@ -163,24 +163,26 @@
 
                     // combine button container filters
                     // (cartesian product: [.color1, .color2] X [.type1, .type2] = ".color1.type1, .color1.type2, .color2.type1, .color2.type2")
-                    var first = [], result = [];
+                    var result = [];
                     for (var group in groupFilterColl) {
                         // set first array of cartesian product
                         if (result.length == 0) {
                             result = groupFilterColl[group];
-                            continue;
                         } else {
-                            first = result;
-                            result = [];
-                        }
-
-                        // cartesian product of result array with current group filter array
-                        var second = groupFilterColl[group];
-                        for (var i = 0; i < first.length; i++) {
-                            for (var j = 0; j < second.length; j++) {
-                                result.push(first[i]+second[j]);
+                            // cartesian product of result array with next group filter array
+                            var first = result,
+                                second = groupFilterColl[group];
+                            if (second.length > 0) {
+                                // combine filters of both containers
+                                result = [];
+                                for (var i = 0; i < first.length; i++) {
+                                    for (var j = 0; j < second.length; j++) {
+                                        result.push(first[i]+second[j]);
+                                    }
+                                }
                             }
                         }
+
                     }
 
                     // filter the isotope container accordingly
