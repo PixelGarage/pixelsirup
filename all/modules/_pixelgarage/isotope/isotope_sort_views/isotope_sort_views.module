@@ -23,6 +23,8 @@ function template_preprocess_views_view_isotope_sort(&$vars) {
   $rows = $vars['rows'];
   $sort_criteria = array();
   $classes_array = sizeof($vars['classes_array']) > 0 ? $vars['classes_array'] : array();
+  $reset_label = ($options['isotope_sort_reset_label'] === '<none>') ? '' : $options['isotope_sort_reset_label'];
+
 
   foreach ($rows as $id => $row) {
     $row = trim($row);
@@ -42,7 +44,7 @@ function template_preprocess_views_view_isotope_sort(&$vars) {
   $button_group_id = 'sort-buttons-' . $view->vid . '-' . drupal_clean_css_identifier($view->current_display);
   $vars['button_group_id'] = $button_group_id;
   $vars['title'] = $options['isotope_sort_title'];
-  $vars['reset_label'] = ($options['isotope_sort_reset_label'] === '<none>') ? '' : check_plain($options['isotope_sort_reset_label']);
+  $vars['reset_label'] = t($reset_label);
   $vars['sort_criteria'] = $sort_criteria;
   $vars['classes_array'] = $classes_array;
 

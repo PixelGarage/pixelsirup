@@ -33,6 +33,9 @@ class views_plugin_pager_isotope_iscroll_views extends views_plugin_pager_full {
       if (is_int($default_value)) {
         $options[$option]['bool'] = TRUE;
       }
+      if (is_string($default_value)) {
+        $options[$option]['translatable'] = TRUE;
+      }
     }
 
     return $options;
