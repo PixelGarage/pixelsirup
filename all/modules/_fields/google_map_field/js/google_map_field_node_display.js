@@ -16,40 +16,38 @@ var google_map_field_map;
 (function ($) {
   Drupal.behaviors.google_map_field = {
     attach: function (context) {
-      // Pick up all elements of class google_map_field and loop
-      // through them calling the google_map_field_load_map function
-      // with the object ID.
-      $(".google_map_field_display").each(function(index, item) {
-        var objId = $(item).attr('id');
-        google_map_field_load_map(objId);
-      });
+      googleMapFieldNodeDisplay();
     }
   };
-})(jQuery);
 
-/**
- * This function is called by the google_map_field Drupal.behaviour and
- * loads a google map in tot he given map ID container.
- */
-function google_map_field_load_map(map_id) {
-  // Get the settings for the map from the Drupal.settings object.
-  var lat = Drupal.settings.gmf_node_display[map_id]['lat'];
-  var lon = Drupal.settings.gmf_node_display[map_id]['lon'];
-  var zoom = parseInt(Drupal.settings.gmf_node_display[map_id]['zoom']);
-  // Create the map coords and map options.
-  var latlng = new google.maps.LatLng(lat, lon);
-  var mapOptions = {
-    zoom: zoom,
-    center: latlng,
-    streetViewControl: false,
-    mapTypeId: google.maps.MapTypeId.ROADMAP
-  };
-  // create the map.
-  google_map_field_map = new google.maps.Map(document.getElementById(map_id), mapOptions);
-  // Drop a marker at the specified position.
-  marker = new google.maps.Marker({
-    position: latlng,
-    optimized: false,
-    map: google_map_field_map
-  });
-}
+  googleMapFieldNodeDisplay = function() {
+    $(".google_map_field_display").each(function(index, item) {
+
+      // Get the settings for the map from the Drupal.settings object.
+      var lat = $(this).attr('data-lat');
+      var lon = $(this).attr('data-lng');
+      var zoom = parseInt($(this).attr('data-zoom'));
+
+      // Create the map coords and map options.
+      var latlng = new google.maps.LatLng(lat, lon);
+      var mapOptions = {
+        zoom: zoom,
+        center: latlng,
+        streetViewControl: false,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+      google_map_field_map = new google.maps.Map(this, mapOptions);
+
+      google.maps.event.trigger(google_map_field_map, 'resize')
+
+      // Drop a marker at the specified position.
+      marker = new google.maps.Marker({
+        position: latlng,
+        optimized: false,
+        map: google_map_field_map
+      });
+
+    });
+  }
+
+})(jQuery);

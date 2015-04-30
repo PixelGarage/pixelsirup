@@ -5,12 +5,9 @@ package = Fields
 
 dependencies[] = node
 dependencies[] = field
-
-stylesheets[screen][] = find_content.css
-
-; Information added by Drupal.org packaging script on 2014-02-04
-version = "7.x-1.2"
+; Information added by Drupal.org packaging script on 2015-02-17
+version = "7.x-1.6"
 core = "7.x"
 project = "find_content"
-datestamp = "1391519010"
+datestamp = "1424198615"
 

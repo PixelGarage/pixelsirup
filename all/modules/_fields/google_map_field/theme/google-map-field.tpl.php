@@ -15,5 +15,5 @@
   <div class="google-map-field-label">
     <?php print $name; ?>
   </div>
-  <div id="google_map_field_<?php print $map_id; ?>" class="google_map_field_display"></div>
+  <div class="google_map_field_display" data-lat="<?php print $lat; ?>" data-lng="<?php print $lng; ?>" data-zoom="<?php print $zoom; ?>"></div>
 </div>

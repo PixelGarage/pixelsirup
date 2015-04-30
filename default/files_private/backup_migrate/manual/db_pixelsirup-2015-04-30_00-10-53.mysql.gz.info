@@ -1,0 +1,8 @@
+filename = "db_pixelsirup-2015-04-30_00-10-53"
+description = ""
+datestamp = "1430345453"
+generator = "Backup and Migrate (http://drupal.org/project/backup_migrate)"
+generatorversion = "7.x-2.x"
+sites[0][version] = "7.28"
+sites[0][name] = "Werkstatt Blog"
+sites[0][url] = "http://www.pixelsirup.ch/"
